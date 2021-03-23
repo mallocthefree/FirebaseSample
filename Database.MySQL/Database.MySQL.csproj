@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Deploy" />
+      <Folder Include="SQL\environment" />
+      <Folder Include="SQL\fks" />
+      <Folder Include="SQL\functions" />
+      <Folder Include="SQL\post" />
+      <Folder Include="SQL\pre" />
+      <Folder Include="SQL\procedures" />
+      <Folder Include="SQL\schemas" />
+      <Folder Include="SQL\security" />
+      <Folder Include="SQL\static" />
+      <Folder Include="SQL\tables" />
+      <Folder Include="SQL\testData" />
+    </ItemGroup>
+
+</Project>

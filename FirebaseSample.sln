@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JeremySnyder.Security", "Je
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JeremySnyder.Common", "JeremySnyder.Common\JeremySnyder.Common.csproj", "{6A38BEDE-CC70-4E1C-B614-3E98B05CF9A4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database.MySQL", "Database.MySQL\Database.MySQL.csproj", "{6FA4D165-8078-42BD-BE6D-FF8CD66157A4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{6A38BEDE-CC70-4E1C-B614-3E98B05CF9A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A38BEDE-CC70-4E1C-B614-3E98B05CF9A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A38BEDE-CC70-4E1C-B614-3E98B05CF9A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FA4D165-8078-42BD-BE6D-FF8CD66157A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FA4D165-8078-42BD-BE6D-FF8CD66157A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FA4D165-8078-42BD-BE6D-FF8CD66157A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FA4D165-8078-42BD-BE6D-FF8CD66157A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
