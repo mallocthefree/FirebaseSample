@@ -34,7 +34,7 @@ print("==================================================")
 print("Building master SQL file for the database")
 print("File list:")
 
-with io.open('Clear_Master.sql', 'wt', encoding="utf-8") as outfile:
+with io.open('SQL_Master.sql', 'wt', encoding="utf-8") as outfile:
     for folder in subfolderList:
         if os.path.exists(folder):
             file_names = sorted(os.listdir(folder))
