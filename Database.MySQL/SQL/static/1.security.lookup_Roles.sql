@@ -18,7 +18,7 @@ WHERE sri.ID IS NULL;
 
 UPDATE security.lookup_Roles sri
 INNER JOIN security_roles_insert r on r.ID = sri.ID
-SET sri.Active = r.Active, sri.RoleName = r.Active
+SET sri.Active = r.Active, sri.RoleName = r.RoleName
 WHERE r.Active <> sri.Active OR r.RoleName <> sri.RoleName;
 
 DROP TABLE security_roles_insert;
