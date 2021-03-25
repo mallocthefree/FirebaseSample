@@ -79,15 +79,40 @@ SELECT 'Starting 2.Pre_WipeEveryRelease.sql';
 
 SELECT 'Ending 2.Pre_WipeEveryRelease.sql';
 
+CREATE TABLE IF NOT EXISTS security.lookup_Integrations
+(
+    ID INT PRIMARY KEY UNIQUE ,
+    IntegrationName VARCHAR(50) NOT NULL,
+    Active INT NOT NULL DEFAULT(1),
+    DateTimeCreatedUTC DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+    DateTimeLastUpdatedUTC DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0)
+)
+COMMENT = 'This entity contains all the integrations that the system will use to tie a user to an external system.'
+;
+
 CREATE TABLE IF NOT EXISTS security.lookup_Roles
 (
-    ID INT PRIMARY KEY AUTO_INCREMENT UNIQUE ,
+    ID INT PRIMARY KEY UNIQUE ,
     RoleName VARCHAR(50) NOT NULL,
     Active INT NOT NULL DEFAULT(1),
     DateTimeCreatedUTC DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
     DateTimeLastUpdatedUTC DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0)
 )
 COMMENT = 'This entity contains all the roles that the system will need, e.g. User and Admin'
+;
+
+
+SELECT 'Create table script for security.tblUserIntegrations';
+CREATE TABLE IF NOT EXISTS security.tblUserIntegrations
+(
+    UserID            BIGINT       NOT NULL,
+    IntegrationTypeID INT          NOT NULL,
+    ExternalID        VARCHAR(200) NOT NULL,
+    PRIMARY KEY (UserID, IntegrationTypeID),
+    UNIQUE (IntegrationTypeID, ExternalID)
+)
+COMMENT = 'This table to to contain integration IDs from external sites in conjunction with our internal users.
+           Examples of integrations may include: Firebase, HubSpot, SalesForce, or any other external system.'
 ;
 
 CREATE TABLE IF NOT EXISTS security.tblUserRoles
@@ -97,7 +122,7 @@ CREATE TABLE IF NOT EXISTS security.tblUserRoles
     Active INT DEFAULT(1),
     DateTimeCreatedUTC DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
     DateTimeLastUpdatedUTC DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0),
-    UNIQUE (UserID, RoleID)
+    PRIMARY KEY (UserID, RoleID)
 )
 COMMENT = 'This table is the where we join users to roles to form the authorization for the system(s)'
 ;
@@ -115,6 +140,47 @@ CREATE TABLE IF NOT EXISTS security.tblUsers
 )
 COMMENT = 'This is the main security identity where combined with security.lookup_Roles and security.tblUserRoles creates the authorization for the system(s).';
 ;
+
+SELECT 'Starting FK scripts for security.tblUserRoles';
+
+DROP PROCEDURE IF EXISTS security.AddUserIntegrationKeys;
+
+CREATE PROCEDURE security.AddUserIntegrationKeys()
+BEGIN
+    IF NOT EXISTS (
+        SELECT NULL
+        FROM information_schema.TABLE_CONSTRAINTS
+        WHERE
+            CONSTRAINT_SCHEMA = DATABASE() AND
+            CONSTRAINT_NAME   = 'fk_security_tblUserIntegrations_tblUsers_UserID' AND
+            CONSTRAINT_TYPE   = 'FOREIGN KEY'
+    )
+    THEN
+        ALTER TABLE security.tblUserIntegrations
+        ADD CONSTRAINT fk_security_tblUserIntegrations_tblUsers_UserID
+        FOREIGN KEY (UserID)
+        REFERENCES security.tblUsers (ID);
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT NULL
+        FROM information_schema.TABLE_CONSTRAINTS
+        WHERE
+            CONSTRAINT_SCHEMA = DATABASE() AND
+            CONSTRAINT_NAME   = 'fk_security_tblUserIntegrations_lookupIntegrations_IntegrationID' AND
+            CONSTRAINT_TYPE   = 'FOREIGN KEY'
+    )
+    THEN
+        ALTER TABLE security.tblUserIntegrations
+        ADD CONSTRAINT fk_security_tblUserIntegrations_lookupIntegrations_IntegrationID
+        FOREIGN KEY (IntegrationTypeID)
+        REFERENCES security.lookup_Integrations (ID);
+    END IF;
+END;
+
+CALL security.AddUserIntegrationKeys();
+
+DROP PROCEDURE IF EXISTS security.AddUserIntegrationKeys;
 
 SELECT 'Starting FK scripts for security.tblUserRoles';
 
@@ -157,6 +223,30 @@ CALL security.AddUserRoleKeys();
 
 
 DROP PROCEDURE IF EXISTS security.AddUserRoleKeys;
+
+CREATE TEMPORARY TABLE IF NOT EXISTS security_roles_insert SELECT * FROM security.lookup_Roles LIMIT 0;
+
+INSERT INTO security_roles_insert
+(ID, RoleName, Active)
+VALUES
+(1, 'Admin', 1),
+(2, 'User', 1);
+
+INSERT INTO
+    security.lookup_Roles
+(ID, RoleName, Active)
+SELECT
+r.ID, r.RoleName, r.Active
+FROM security_roles_insert r
+LEFT OUTER JOIN security.lookup_Roles sri on r.ID = sri.ID
+WHERE sri.ID IS NULL;
+
+UPDATE security.lookup_Roles sri
+INNER JOIN security_roles_insert r on r.ID = sri.ID
+SET sri.Active = r.Active, sri.RoleName = r.Active
+WHERE r.Active <> sri.Active OR r.RoleName <> sri.RoleName;
+
+DROP TABLE security_roles_insert;
 /*
  Reserved for the end of the master script.
  Can be DB changes or queries to be implemented that have to be done after all
