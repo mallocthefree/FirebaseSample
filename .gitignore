@@ -1,6 +1,6 @@
 .git
-/.idea
-/obj
-/bin
-/obj/
-/bin/
+.idea/
+obj/
+bin/
+Debug/
+Release/
