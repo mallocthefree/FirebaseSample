@@ -38,7 +38,7 @@ BEGIN
     SELECT CONCAT
         (
             CAST(DATE_FORMAT(now, '%Y.%m.') AS CHAR(10)),
-            CAST(count AS CHAR(2))
+            LPAD(count, 3, '0')
         )
     INTO versionStr;
 

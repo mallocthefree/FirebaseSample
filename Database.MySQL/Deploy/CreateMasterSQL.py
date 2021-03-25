@@ -23,6 +23,7 @@ subfolderList =\
                     "../SQL/pre",
                     "../SQL/tables",
                     "../SQL/fks",
+                    "../SQL/constraints",
                     "../SQL/static",
                     "../SQL/functions",
                     "../SQL/procedures",

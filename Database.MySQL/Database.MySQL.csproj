@@ -7,6 +7,7 @@
     <ItemGroup>
       <Folder Include="Deploy" />
       <Folder Include="obj\Debug\netcoreapp3.1" />
+      <Folder Include="SQL\constraints" />
       <Folder Include="SQL\environment" />
       <Folder Include="SQL\fks" />
       <Folder Include="SQL\functions" />

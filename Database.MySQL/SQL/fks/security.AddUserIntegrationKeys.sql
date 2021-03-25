@@ -1,5 +1,5 @@
 
-SELECT 'Starting FK scripts for security.tblUserRoles';
+SELECT 'Starting FK scripts for security.tblUserIntegrations';
 
 DROP PROCEDURE IF EXISTS security.AddUserIntegrationKeys;
 
@@ -31,7 +31,7 @@ BEGIN
     THEN
         ALTER TABLE security.tblUserIntegrations
         ADD CONSTRAINT fk_security_tblUserIntegrations_lookupIntegrations_IntegrationID
-        FOREIGN KEY (IntegrationTypeID)
+        FOREIGN KEY (IntegrationID)
         REFERENCES security.lookup_Integrations (ID);
     END IF;
 END;

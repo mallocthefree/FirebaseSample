@@ -42,7 +42,7 @@ BEGIN
     SELECT CONCAT
         (
             CAST(DATE_FORMAT(now, '%Y.%m.') AS CHAR(10)),
-            CAST(count AS CHAR(2))
+            LPAD(count, 3, '0')
         )
     INTO versionStr;
 
@@ -106,10 +106,10 @@ SELECT 'Create table script for security.tblUserIntegrations';
 CREATE TABLE IF NOT EXISTS security.tblUserIntegrations
 (
     UserID            BIGINT       NOT NULL,
-    IntegrationTypeID INT          NOT NULL,
+    IntegrationID     INT          NOT NULL,
     ExternalID        VARCHAR(200) NOT NULL,
-    PRIMARY KEY (UserID, IntegrationTypeID),
-    UNIQUE (IntegrationTypeID, ExternalID)
+    PRIMARY KEY (UserID, IntegrationID),
+    UNIQUE (IntegrationID, ExternalID)
 )
 COMMENT = 'This table to to contain integration IDs from external sites in conjunction with our internal users.
            Examples of integrations may include: Firebase, HubSpot, SalesForce, or any other external system.'
@@ -141,7 +141,7 @@ CREATE TABLE IF NOT EXISTS security.tblUsers
 COMMENT = 'This is the main security identity where combined with security.lookup_Roles and security.tblUserRoles creates the authorization for the system(s).';
 ;
 
-SELECT 'Starting FK scripts for security.tblUserRoles';
+SELECT 'Starting FK scripts for security.tblUserIntegrations';
 
 DROP PROCEDURE IF EXISTS security.AddUserIntegrationKeys;
 
@@ -173,7 +173,7 @@ BEGIN
     THEN
         ALTER TABLE security.tblUserIntegrations
         ADD CONSTRAINT fk_security_tblUserIntegrations_lookupIntegrations_IntegrationID
-        FOREIGN KEY (IntegrationTypeID)
+        FOREIGN KEY (IntegrationID)
         REFERENCES security.lookup_Integrations (ID);
     END IF;
 END;
@@ -223,6 +223,29 @@ CALL security.AddUserRoleKeys();
 
 
 DROP PROCEDURE IF EXISTS security.AddUserRoleKeys;
+
+CREATE TEMPORARY TABLE IF NOT EXISTS security_integrations SELECT * FROM security.lookup_Integrations LIMIT 0;
+
+INSERT INTO security_integrations
+(ID, IntegrationName, Active)
+VALUES
+(1, 'Firebase', 1);
+
+INSERT INTO
+    security.lookup_Integrations
+(ID, IntegrationName, Active)
+SELECT
+si.ID, si.IntegrationName, si.Active
+FROM security_integrations si
+LEFT OUTER JOIN security.lookup_Integrations sli on si.ID = sli.ID
+WHERE sli.ID IS NULL;
+
+UPDATE security.lookup_Integrations sli
+INNER JOIN security_integrations r on r.ID = sli.ID
+SET sli.Active = r.Active, sli.IntegrationName = r.IntegrationName
+WHERE r.Active <> sli.Active OR r.IntegrationName <> sli.IntegrationName;
+
+DROP TABLE IF EXISTS security_integrations;
 
 CREATE TEMPORARY TABLE IF NOT EXISTS security_roles_insert SELECT * FROM security.lookup_Roles LIMIT 0;
 
@@ -285,3 +308,122 @@ SELECT 'Starting ZZ.post_Keep.sql';
 CALL security.DeclareDeployment('End');
 
 SELECT 'Ending ZZ.post_Keep.sql';
+SELECT 'Adding test user data';
+
+/*************************************************************
+  Users
+*************************************************************/
+
+DROP PROCEDURE IF EXISTS AddTestUsers;
+
+CREATE PROCEDURE AddTestUsers()
+BEGIN
+    CREATE TEMPORARY TABLE IF NOT EXISTS security_users SELECT * FROM security.tblUsers LIMIT 0;
+
+    INSERT INTO security_users
+    (ID, Name, FirstName, LastName, PhoneNumber, Active)
+    VALUES
+    (1, 'Test User', 'Jeremy' , 'Snyder', '+1-952-555-1212', 1);
+
+    ALTER TABLE security.tblUsers AUTO_INCREMENT=1;
+
+    INSERT INTO
+        security.tblUsers
+    (Name, FirstName, LastName, PhoneNumber, Active)
+    SELECT
+           u.Name,
+           u.FirstName,
+           u.LastName,
+           u.PhoneNumber,
+           u.Active
+    FROM security_users u
+    LEFT OUTER JOIN security.tblUsers su ON
+        u.ID = su.ID
+    WHERE su.ID IS NULL;
+
+    UPDATE security.tblUsers su
+    INNER JOIN security_users u ON u.ID = su.ID
+    SET su.Active = u.Active
+    WHERE u.Active <> su.Active OR
+          u.PhoneNumber <> su.PhoneNumber OR
+          u.FirstName <> su.FirstName OR
+          u.LastName <> su.LastName OR
+          u.Name <> su.Name;
+
+    ALTER TABLE security.tblUsers AUTO_INCREMENT=1000;
+
+    DROP TABLE IF EXISTS security_users;
+END;
+
+
+CALL AddTestUsers();
+
+DROP PROCEDURE IF EXISTS AddTestUsers;
+
+/*************************************************************
+  User Roles
+*************************************************************/
+
+DROP TABLE IF EXISTS security_userRoles;
+
+CREATE TEMPORARY TABLE IF NOT EXISTS security_userRoles SELECT * FROM security.tblUserRoles LIMIT 0;
+
+INSERT INTO security_userRoles
+(UserID, RoleID, Active)
+VALUES
+(1, 1, 1),
+(1, 2, 1);
+
+INSERT INTO
+    security.tblUserRoles
+(UserID, RoleID, Active)
+SELECT
+si.UserID, si.RoleID, si.Active
+FROM security_userRoles si
+LEFT OUTER JOIN security.tblUserRoles sli ON
+    si.UserID = sli.UserID AND
+    si.RoleID = sli.RoleID
+WHERE sli.UserID IS NULL;
+
+UPDATE security.tblUserRoles sur
+INNER JOIN security_userRoles ur ON
+    ur.UserID = sur.UserID AND
+    ur.RoleID = sur.RoleID
+SET sur.Active = ur.Active
+WHERE ur.Active <> sur.Active;
+
+DROP TABLE IF EXISTS security_userRoles;
+
+/*************************************************************
+  User Integrations
+*************************************************************/
+
+DROP TABLE IF EXISTS security_userIntegrations;
+
+CREATE TEMPORARY TABLE IF NOT EXISTS security_userIntegrations SELECT * FROM security.tblUserIntegrations LIMIT 0;
+
+INSERT INTO security_userIntegrations
+(UserID, IntegrationID, ExternalID)
+VALUES
+(1, 1, 'v2OcfN1HtPVm30JrSpfpnDhN3Tg1');
+
+INSERT INTO
+    security.tblUserIntegrations
+(UserID, IntegrationID, ExternalID)
+SELECT
+ui.UserID, ui.IntegrationID, ui.ExternalID
+FROM security_userIntegrations ui
+LEFT OUTER JOIN security.tblUserIntegrations sui ON
+    sui.UserID = ui.UserID AND
+    sui.IntegrationID = ui.IntegrationID
+WHERE sui.UserID IS NULL;
+
+UPDATE security.tblUserIntegrations sui
+INNER JOIN security.tblUserIntegrations ui ON
+    ui.UserID = sui.UserID AND
+    ui.IntegrationID = sui.IntegrationID
+SET sui.ExternalID = ui.ExternalID
+WHERE ui.ExternalID <> sui.ExternalID;
+
+
+DROP TABLE IF EXISTS security_userIntegrations;
