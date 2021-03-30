@@ -31,7 +31,8 @@ BEGIN
     SELECT ((COUNT(*) / 2) + 1)
     INTO count
     FROM security.tblDeployment
-    WHERE DateTimeDeployedUTC > CAST(DATE_FORMAT(now, '%Y.%m.01') AS DATE);
+    WHERE DateTimeDeployedUTC > CAST(DATE_FORMAT(now, '%Y.%m.01') AS DATE)
+          AND Type = state;
 
     SELECT count;
 
