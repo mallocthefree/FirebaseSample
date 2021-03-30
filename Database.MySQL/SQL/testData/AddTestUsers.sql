@@ -11,20 +11,19 @@ BEGIN
     CREATE TEMPORARY TABLE IF NOT EXISTS security_users SELECT * FROM security.tblUsers LIMIT 0;
 
     INSERT INTO security_users
-    (ID, Name, FirstName, LastName, PhoneNumber, Active)
+    (ID, Name, FirstName, LastName, Active)
     VALUES
-    (1, 'Test User', 'Jeremy' , 'Snyder', '+1-952-555-1212', 1);
+    (1, 'Test User', 'Jeremy' , 'Snyder', 1);
 
     ALTER TABLE security.tblUsers AUTO_INCREMENT=1;
 
     INSERT INTO
         security.tblUsers
-    (Name, FirstName, LastName, PhoneNumber, Active)
+    (Name, FirstName, LastName, Active)
     SELECT
            u.Name,
            u.FirstName,
            u.LastName,
-           u.PhoneNumber,
            u.Active
     FROM security_users u
     LEFT OUTER JOIN security.tblUsers su ON
@@ -35,7 +34,6 @@ BEGIN
     INNER JOIN security_users u ON u.ID = su.ID
     SET su.Active = u.Active
     WHERE u.Active <> su.Active OR
-          u.PhoneNumber <> su.PhoneNumber OR
           u.FirstName <> su.FirstName OR
           u.LastName <> su.LastName OR
           u.Name <> su.Name;

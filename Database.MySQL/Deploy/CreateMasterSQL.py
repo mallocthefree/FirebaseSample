@@ -27,8 +27,8 @@ subfolderList =\
                     "../SQL/static",
                     "../SQL/functions",
                     "../SQL/procedures",
-                    "../SQL/post",
-                    "../SQL/testData"
+                    "../SQL/testData",
+                    "../SQL/post"
                 ]
 
 print("==================================================")

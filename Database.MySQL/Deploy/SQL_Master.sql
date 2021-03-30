@@ -170,7 +170,6 @@ CREATE TABLE IF NOT EXISTS security.tblUsers
     Name VARCHAR(100) NOT NULL,
     FirstName VARCHAR(100) NULL,
     LastName VARCHAR(100) NULL,
-    PhoneNumber VARCHAR(50) NULL,
     Active INTEGER NOT NULL DEFAULT (1),
     DateTimeCreatedUTC DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
     DateTimeLastUpdatedUTC DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0)
@@ -396,54 +395,376 @@ CALL rel.GetReleaseInfo();
 END;
 
 
+SELECT 'Creating function security.AddUpdateUserRole';
+
+DROP PROCEDURE IF EXISTS security.AddUpdateUserRole;
+
+CREATE PROCEDURE security.AddUpdateUserRole
+    (
+        IN pUserID BIGINT,
+        IN pRoleID INT,
+        IN pActive INT
+    )
+BEGIN
+/**********************************************************************************************
+*   Copyright (c) Oso Vega, 2021
+*
+*   Initial Author:     Jeremy Snyder
+*   Initial Version:    March 30, 2021
+*   Description:        Add or update a user role
+*
+*   Parameters:
+*               pUserID      The user's internal UserID
+*               pRoleID      The ID of the role ( lookup_Roles )
+*               pActive      Activate or deactivate a user's role
+*
+*   Results:
+*       Return row added or updated in the tblUserIntegrations
+*
+*   Revision History:
+*
+*   Examples:
+
+    CALL security.AddUpdateUserRole ( 1, 1, 1 );
+
+***********************************************************************************************/
+
+    IF EXISTS (SELECT 1
+               FROM security.tblUserRoles ur
+               WHERE ur.UserID = pUserID AND
+                     ur.RoleID = pRoleID)
+    THEN
+        UPDATE security.tblUserRoles ur
+        SET Active = pActive
+        WHERE ur.UserID = pUserID AND
+              ur.RoleID = pRoleID AND
+              ur.Active <> pActive;
+    ELSE
+        INSERT INTO security.tblUserRoles
+        (UserID, RoleID, Active)
+        VALUES
+        (pUserID, pRoleID, pActive);
+    END IF;
+
+    CALL security.GetUserRoles(pUserID);
+
+END;
+
+SELECT 'Creating function security.CreateUpdateUser';
+
+DROP PROCEDURE IF EXISTS security.CreateUpdateUser;
+
+CREATE PROCEDURE security.CreateUpdateUser
+    (
+        IN pUserID BIGINT,
+        IN pName VARCHAR(100),
+        IN pFirstName VARCHAR(100),
+        IN pLastName VARCHAR(100),
+        IN pActive INT,
+        IN pIntegrationID INT,
+        IN pExternalID VARCHAR(200)
+    )
+BEGIN
+/**********************************************************************************************
+*   Copyright (c) Oso Vega, 2021
+*
+*   Initial Author:     Jeremy Snyder
+*   Initial Version:    March 30, 2021
+*   Description:        Create or update a user
+*
+*   Parameters:
+*               pUserID  The user's internal UserID
+*
+*   Results:
+*       Return table of added or updated user information
+*
+*   Revision History:
+*
+*   Examples:
+
+    CALL security.CreateUpdateUser ( 1, 'Test User', 'Jeremy', 'Snyder', 1, 1, 'v2OcfN1HtPVm30JrSpfpnDhN3Tg1' );
+    CALL security.CreateUpdateUser ( NULL, 'Other Test User', 'Jeremy', 'Snyder', 1, 1, 'testKey' );
+
+***********************************************************************************************/
+
+    IF EXISTS (SELECT 1
+               FROM security.tblUserIntegrations
+               WHERE IntegrationID = pIntegrationID AND
+                     ExternalID = pExternalID)
+    THEN
+        SELECT UserID
+        FROM security.tblUserIntegrations
+        WHERE IntegrationID = pIntegrationID AND
+              ExternalID = pExternalID
+        LIMIT 1
+        INTO pUserID;
+    END IF;
+
+    IF pUserID > 0 AND
+       pUserID IS NOT NULL
+    THEN
+        UPDATE security.tblUsers u
+        SET Name = pName,
+            FirstName = pFirstName,
+            LastName = pLastName,
+            Active = pActive
+        WHERE u.ID = pUserID AND
+              (
+                  Name <> pName OR
+                  FirstName <> pFirstName OR
+                  LastName <> pLastName OR
+                  Active <> pActive
+              );
+    ELSE
+        INSERT INTO security.tblUsers
+        (Name, FirstName, LastName, Active)
+        VALUES
+        (pName, pFirstName, pLastName, pActive);
+
+        SELECT LAST_INSERT_ID() INTO pUserID;
+    END IF;
+
+    CALL security.CreateUpdateUserIntegration(pUserID, pIntegrationID, pExternalID);
+
+    CALL security.GetUserByID ( pUserID );
+
+END;
+
+SELECT 'Creating function security.CreateUpdateUserIntegration';
+
+DROP PROCEDURE IF EXISTS security.CreateUpdateUserIntegration;
+
+CREATE PROCEDURE security.CreateUpdateUserIntegration
+    (
+        IN pUserID BIGINT,
+        IN pIntegrationID INT,
+        IN pExternalID VARCHAR(200)
+    )
+BEGIN
+/**********************************************************************************************
+*   Copyright (c) Oso Vega, 2021
+*
+*   Initial Author:     Jeremy Snyder
+*   Initial Version:    March 30, 2021
+*   Description:        Create or update a user integration externalID
+*
+*   Parameters:
+*               pUserID          The user's internal UserID
+*               pIntegrationID   The ID of the integration type ( lookup_Integrations )
+*               pExternalID      The user's ID in the integrated system
+*
+*   Results:
+*       Return row added or updated in the tblUserIntegrations
+*
+*   Revision History:
+*
+*   Examples:
+
+   CALL security.CreateUpdateUserIntegration ( 1, 1, 'v2OcfN1HtPVm30JrSpfpnDhN3Tg1' );
+
+***********************************************************************************************/
+
+    IF EXISTS (SELECT 1
+               FROM security.tblUserIntegrations ui
+               WHERE UserID = pUserID AND
+                     IntegrationID = pIntegrationID)
+    THEN
+        UPDATE security.tblUserIntegrations ui
+        SET ExternalID = pExternalID
+        WHERE ui.UserID = pUserID AND
+              ui.IntegrationID = pIntegrationID;
+    ELSE
+        INSERT INTO security.tblUserIntegrations
+        (UserID, IntegrationID, ExternalID)
+        VALUES
+        (pUserID, pIntegrationID, pExternalID);
+    END IF;
+
+    SELECT ui.UserID,
+           ui.IntegrationID,
+           ui.ExternalID
+    FROM security.tblUserIntegrations ui
+    WHERE ui.UserID = pUserID AND
+          ui.IntegrationID = pIntegrationID;
+
+END;
+
+SELECT 'Creating function security.GetRoles';
+
+DROP PROCEDURE IF EXISTS security.GetRoles;
+
+CREATE PROCEDURE security.GetRoles()
+BEGIN
+/**********************************************************************************************
+*   Copyright (c) Oso Vega, 2021
+*
+*   Initial Author:     Jeremy Snyder
+*   Initial Version:    March 30, 2021
+*   Description:        Get all Roles
+*
+*   Parameters:
+*
+*   Results:
+*       Return table of active RoleID and RoleNames
+*
+*   Revision History:
+*
+*   Examples:
+
+    CALL security.GetRoles();
+
+***********************************************************************************************/
+
+    SELECT
+           lr.ID,
+           lr.RoleName
+    FROM security.lookup_Roles lr
+    WHERE lr.Active= 1
+    ORDER BY lr.RoleName;
+
+END;
+
+SELECT 'Creating function security.GetUserByID';
+
+DROP PROCEDURE IF EXISTS security.GetUserByID;
+
+CREATE PROCEDURE security.GetUserByID( IN userID BIGINT )
+BEGIN
+/**********************************************************************************************
+*   Copyright (c) Oso Vega, 2021
+*
+*   Initial Author:     Jeremy Snyder
+*   Initial Version:    March 30, 2021
+*   Description:        Get all user information from the given UserID
+*
+*   Parameters:
+*               userID  The user's internal UserID
+*
+*   Results:
+*       Return table of user information
+*
+*   Revision History:
+*
+*   Examples:
+
+    CALL security.GetUserByID ( 1 );
+
+***********************************************************************************************/
+
+/*
+ In most SQL queries I would represent the full extent of the data using a cross apply. However,
+ since we are only interested in data related to security as this is a 'security' schema procedure, I
+ will then apply a direct query to include only the IntegrationID = 1 which we know to be Firebase.
+ */
+    SELECT
+           u.ID,
+           u.Name,
+           u.FirstName,
+           u.LastName,
+           ui.ExternalID,
+           u.Active
+    FROM security.tblUsers u
+        LEFT OUTER JOIN security.tblUserIntegrations ui
+            ON u.ID = ui.UserID AND ui.IntegrationID = 1 /* Currently enforce only Firebase in response */
+    WHERE u.ID = userID;
+/* Additional note:
+   ui.IntegrationID = 1 could also have been part of the WHERE clause. I add it to the join because it
+   will filter out at that layer before the WHERE is provided. Most modern databases will optimize this
+   for us now. However, I will usually assume nothing.
+ */
+
+END;
+
+SELECT 'Creating function security.GetUserIDByExternalID';
+
+DROP PROCEDURE IF EXISTS GetUserIDByExternalID;
+
+CREATE PROCEDURE security.GetUserIDByExternalID
+    (
+        IN integrationID BIGINT,
+        IN externalID VARCHAR(200)
+    )
+BEGIN
+/**********************************************************************************************
+*   Copyright (c) Jeremy Snyder Consulting, 2021
+*
+*   Initial Author:     Jeremy Snyder
+*   Initial Version:    March 30, 2021
+*   Description:        Get UserID from security.tblUserIntegrations
+*
+*   Parameters:
+*               integrationID
+*               externalID
+*   Results:
+*               UserID of the user if successful. Else 0
+*
+*   Revision History:
+*
+*   Examples:
+
+CALL security.GetUserIDByExternalID( 1, 'v2OcfN1HtPVm30JrSpfpnDhN3Tg1' );
+
+***********************************************************************************************/
+
+        SELECT  0 AS UserID
+        UNION
+        SELECT  ui.UserID
+        FROM    security.tblUserIntegrations  ui
+        WHERE   ui.IntegrationID = integrationID AND
+                ui.ExternalID  = externalID
+        ORDER BY UserID DESC
+        LIMIT 1;
+
+END;
+
+SELECT 'Creating function security.GetUserRoles';
+
+DROP PROCEDURE IF EXISTS security.GetUserRoles;
+
+CREATE PROCEDURE security.GetUserRoles( IN pUserID BIGINT )
+BEGIN
+/**********************************************************************************************
+*   Copyright (c) Oso Vega, 2021
+*
+*   Initial Author:     Jeremy Snyder
+*   Initial Version:    March 30, 2021
+*   Description:        Get Roles by userID
+*
+*   Parameters:
+*               userID         ID of the User ( security.tblUsers )
+*                              Using NULL will return all of the users.
+*   Results:
+*       Return a row(s) with roles by userID
+*
+*   Revision History:
+*
+*   Examples:
+
+    CALL security.GetUserRoles(null);
+    CALL security.GetUserRoles(1);
+    CALL security.GetUserRoles(2);
+
+***********************************************************************************************/
+
+    SELECT
+           ur.UserID,
+           ur.RoleID,
+           lr.RoleName
+    FROM security.tblUserRoles ur
+        INNER JOIN security.tblUsers u
+            ON ur.UserID = u.ID
+        INNER JOIN security.lookup_Roles lr
+            ON ur.roleid = lr.ID
+    WHERE ur.Active = 1 AND
+          u.Active = 1 AND
+          lr.Active = 1 AND
+          ur.UserID = COALESCE( pUserID,  ur.UserID )
+    ORDER BY ur.UserID;
+
+END;
+
 /*******************************************************************************
  *       TAIL [ PROCEDURES ]
- ******************************************************************************/
- 
-/*******************************************************************************
- *       HEADER [ POST ]
- ******************************************************************************/
- /*
- Reserved for the end of the master script.
- Can be DB changes or queries to be implemented that have to be done after all
- other object creation scripts
- */
-
-SELECT 'Starting YY.post_WipedEveryRelease.sql';
-
-/**************************************************/
-/*          DO NOT EDIT ABOVE THIS LINE           */
-/**************************************************/
-
-/**************************************************/
-/*          DO NOT EDIT BELOW THIS LINE           */
-/**************************************************/
-
-SELECT 'Ending YY.post_WipedEveryRelease.sql';
-/*
- Reserved for the end of the master script.
- Can be DB changes or queries to be implemented that have to be done after all
- other object creation scripts
- */
-
-SELECT 'Starting ZZ.post_Keep.sql';
-
-/**************************************************/
-/*          DO NOT EDIT ABOVE THIS LINE           */
-/**************************************************/
-
-
-
-/**************************************************/
-/*          DO NOT EDIT BELOW THIS LINE           */
-/**************************************************/
-
-CALL rel.DeclareDeployment('End');
-
-SELECT 'Ending ZZ.post_Keep.sql';
-
-/*******************************************************************************
- *       TAIL [ POST ]
  ******************************************************************************/
  
 /*******************************************************************************
@@ -462,20 +783,19 @@ BEGIN
     CREATE TEMPORARY TABLE IF NOT EXISTS security_users SELECT * FROM security.tblUsers LIMIT 0;
 
     INSERT INTO security_users
-    (ID, Name, FirstName, LastName, PhoneNumber, Active)
+    (ID, Name, FirstName, LastName, Active)
     VALUES
-    (1, 'Test User', 'Jeremy' , 'Snyder', '+1-952-555-1212', 1);
+    (1, 'Test User', 'Jeremy' , 'Snyder', 1);
 
     ALTER TABLE security.tblUsers AUTO_INCREMENT=1;
 
     INSERT INTO
         security.tblUsers
-    (Name, FirstName, LastName, PhoneNumber, Active)
+    (Name, FirstName, LastName, Active)
     SELECT
            u.Name,
            u.FirstName,
            u.LastName,
-           u.PhoneNumber,
            u.Active
     FROM security_users u
     LEFT OUTER JOIN security.tblUsers su ON
@@ -486,7 +806,6 @@ BEGIN
     INNER JOIN security_users u ON u.ID = su.ID
     SET su.Active = u.Active
     WHERE u.Active <> su.Active OR
-          u.PhoneNumber <> su.PhoneNumber OR
           u.FirstName <> su.FirstName OR
           u.LastName <> su.LastName OR
           u.Name <> su.Name;
@@ -571,5 +890,53 @@ DROP TABLE IF EXISTS security_userIntegrations;
 
 /*******************************************************************************
  *       TAIL [ TESTDATA ]
+ ******************************************************************************/
+ 
+/*******************************************************************************
+ *       HEADER [ POST ]
+ ******************************************************************************/
+ /*
+ Reserved for the end of the master script.
+ Can be DB changes or queries to be implemented that have to be done after all
+ other object creation scripts
+ */
+
+SELECT 'Starting YY.post_WipedEveryRelease.sql';
+
+/**************************************************/
+/*          DO NOT EDIT ABOVE THIS LINE           */
+/**************************************************/
+
+/**************************************************/
+/*          DO NOT EDIT BELOW THIS LINE           */
+/**************************************************/
+
+SELECT 'Ending YY.post_WipedEveryRelease.sql';
+/*
+ Reserved for the end of the master script.
+ Can be DB changes or queries to be implemented that have to be done after all
+ other object creation scripts
+ */
+
+SELECT 'Starting ZZ.post_Keep.sql';
+
+/**************************************************/
+/*          DO NOT EDIT ABOVE THIS LINE           */
+/**************************************************/
+
+
+
+/**************************************************/
+/*          DO NOT EDIT BELOW THIS LINE           */
+/**************************************************/
+
+CALL rel.DeclareDeployment('End');
+
+SELECT 'Ending ZZ.post_Keep.sql';
+
+CALL rel.GetReleaseInfo();
+
+/*******************************************************************************
+ *       TAIL [ POST ]
  ******************************************************************************/
  

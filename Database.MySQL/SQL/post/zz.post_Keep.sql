@@ -19,3 +19,5 @@ SELECT 'Starting ZZ.post_Keep.sql';
 CALL rel.DeclareDeployment('End');
 
 SELECT 'Ending ZZ.post_Keep.sql';
+
+CALL rel.GetReleaseInfo();
