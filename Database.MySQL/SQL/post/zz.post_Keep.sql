@@ -16,6 +16,6 @@ SELECT 'Starting ZZ.post_Keep.sql';
 /*          DO NOT EDIT BELOW THIS LINE           */
 /**************************************************/
 
-CALL security.DeclareDeployment('End');
+CALL rel.DeclareDeployment('End');
 
 SELECT 'Ending ZZ.post_Keep.sql';

@@ -1,10 +1,10 @@
 
 
-SELECT 'Creating procedure security.fn_GetReleaseInfo';
+SELECT 'Creating procedure release.fn_GetReleaseInfo';
 
-DROP PROCEDURE IF EXISTS security.GetReleaseInfo;
+DROP PROCEDURE IF EXISTS rel.GetReleaseInfo;
 
-CREATE PROCEDURE security.GetReleaseInfo()
+CREATE PROCEDURE rel.GetReleaseInfo()
 BEGIN
 /**********************************************************************************************
 *   Copyright (c) Jeremy Snyder Consulting, 2021
@@ -22,14 +22,14 @@ BEGIN
 *
 *   Examples:
 
-CALL security.GetReleaseInfo();
+CALL rel.GetReleaseInfo();
 
 ***********************************************************************************************/
 
     WITH ReleaseVersions AS
         (
             SELECT DISTINCT sd.Version
-            FROM security.tblDeployment sd
+            FROM rel.tblDeployment sd
             GROUP BY sd.Version
         )
         SELECT rv.Version,
@@ -37,9 +37,9 @@ CALL security.GetReleaseInfo();
                completed.DateTimeDeployedUTC AS DateTimeCompleted,
                TIME_TO_SEC(TIMEDIFF(completed.DateTimeDeployedUTC, started.DateTimeDeployedUTC)) AS Seconds
         FROM ReleaseVersions rv
-        INNER JOIN security.tblDeployment started
+        INNER JOIN rel.tblDeployment started
             ON rv.Version = started.Version AND started.Type = 'Start'
-        INNER JOIN security.tblDeployment completed
+        INNER JOIN rel.tblDeployment completed
             ON rv.Version = completed.Version AND completed.Type = 'End'
         ORDER BY started.DateTimeDeployedUTC DESC
         LIMIT 10;

@@ -19,7 +19,7 @@
  *       HEADER [ SCHEMAS ]
  ******************************************************************************/
  
-DELIMITER //
+CREATE SCHEMA IF NOT EXISTS rel;
 
 CREATE SCHEMA IF NOT EXISTS security;
 
@@ -41,7 +41,7 @@ DELIMITER //
 
 SELECT 'Starting 1.Pre_keep.sql';
 
-CREATE TABLE IF NOT EXISTS security.tblDeployment
+CREATE TABLE IF NOT EXISTS rel.tblDeployment
 (
     ID BIGINT PRIMARY KEY AUTO_INCREMENT UNIQUE ,
     Version VARCHAR(100) NOT NULL,
@@ -51,9 +51,9 @@ CREATE TABLE IF NOT EXISTS security.tblDeployment
 COMMENT = 'Keeps track of SQL deployments'
 ;
 
-DROP PROCEDURE IF EXISTS security.DeclareDeployment;
+DROP PROCEDURE IF EXISTS rel.DeclareDeployment;
 
-CREATE PROCEDURE security.DeclareDeployment(state CHAR(10))
+CREATE PROCEDURE rel.DeclareDeployment(state CHAR(10))
 BEGIN
 
     DECLARE count INT DEFAULT (0);
@@ -62,7 +62,7 @@ BEGIN
 
     SELECT ((COUNT(*) / 2) + 1)
     INTO count
-    FROM security.tblDeployment
+    FROM rel.tblDeployment
     WHERE DateTimeDeployedUTC > CAST(DATE_FORMAT(now, '%Y.%m.01') AS DATE)
           AND Type = state;
 
@@ -75,13 +75,13 @@ BEGIN
         )
     INTO versionStr;
 
-    INSERT INTO security.tblDeployment
+    INSERT INTO rel.tblDeployment
         (Version, Type)
     VALUES
         (versionStr, state);
 END;
 
-CALL security.DeclareDeployment('Start');
+CALL rel.DeclareDeployment('Start');
 
 /**************************************************/
 SELECT 'Ending 1.Pre_keep.sql';
@@ -349,11 +349,11 @@ DROP TABLE security_roles_insert;
  ******************************************************************************/
  
 
-SELECT 'Creating procedure security.fn_GetReleaseInfo';
+SELECT 'Creating procedure release.fn_GetReleaseInfo';
 
-DROP PROCEDURE IF EXISTS security.GetReleaseInfo;
+DROP PROCEDURE IF EXISTS rel.GetReleaseInfo;
 
-CREATE PROCEDURE security.GetReleaseInfo()
+CREATE PROCEDURE rel.GetReleaseInfo()
 BEGIN
 /**********************************************************************************************
 *   Copyright (c) Jeremy Snyder Consulting, 2021
@@ -371,14 +371,14 @@ BEGIN
 *
 *   Examples:
 
-CALL security.GetReleaseInfo();
+CALL rel.GetReleaseInfo();
 
 ***********************************************************************************************/
 
     WITH ReleaseVersions AS
         (
             SELECT DISTINCT sd.Version
-            FROM security.tblDeployment sd
+            FROM rel.tblDeployment sd
             GROUP BY sd.Version
         )
         SELECT rv.Version,
@@ -386,9 +386,9 @@ CALL security.GetReleaseInfo();
                completed.DateTimeDeployedUTC AS DateTimeCompleted,
                TIME_TO_SEC(TIMEDIFF(completed.DateTimeDeployedUTC, started.DateTimeDeployedUTC)) AS Seconds
         FROM ReleaseVersions rv
-        INNER JOIN security.tblDeployment started
+        INNER JOIN rel.tblDeployment started
             ON rv.Version = started.Version AND started.Type = 'Start'
-        INNER JOIN security.tblDeployment completed
+        INNER JOIN rel.tblDeployment completed
             ON rv.Version = completed.Version AND completed.Type = 'End'
         ORDER BY started.DateTimeDeployedUTC DESC
         LIMIT 10;
@@ -438,7 +438,7 @@ SELECT 'Starting ZZ.post_Keep.sql';
 /*          DO NOT EDIT BELOW THIS LINE           */
 /**************************************************/
 
-CALL security.DeclareDeployment('End');
+CALL rel.DeclareDeployment('End');
 
 SELECT 'Ending ZZ.post_Keep.sql';
 

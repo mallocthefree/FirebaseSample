@@ -13,7 +13,6 @@
       <Folder Include="SQL\post" />
       <Folder Include="SQL\pre" />
       <Folder Include="SQL\procedures" />
-      <Folder Include="SQL\schemas" />
       <Folder Include="SQL\security" />
       <Folder Include="SQL\static" />
       <Folder Include="SQL\tables" />

@@ -9,7 +9,7 @@ DELIMITER //
 
 SELECT 'Starting 1.Pre_keep.sql';
 
-CREATE TABLE IF NOT EXISTS security.tblDeployment
+CREATE TABLE IF NOT EXISTS rel.tblDeployment
 (
     ID BIGINT PRIMARY KEY AUTO_INCREMENT UNIQUE ,
     Version VARCHAR(100) NOT NULL,
@@ -19,9 +19,9 @@ CREATE TABLE IF NOT EXISTS security.tblDeployment
 COMMENT = 'Keeps track of SQL deployments'
 ;
 
-DROP PROCEDURE IF EXISTS security.DeclareDeployment;
+DROP PROCEDURE IF EXISTS rel.DeclareDeployment;
 
-CREATE PROCEDURE security.DeclareDeployment(state CHAR(10))
+CREATE PROCEDURE rel.DeclareDeployment(state CHAR(10))
 BEGIN
 
     DECLARE count INT DEFAULT (0);
@@ -30,7 +30,7 @@ BEGIN
 
     SELECT ((COUNT(*) / 2) + 1)
     INTO count
-    FROM security.tblDeployment
+    FROM rel.tblDeployment
     WHERE DateTimeDeployedUTC > CAST(DATE_FORMAT(now, '%Y.%m.01') AS DATE)
           AND Type = state;
 
@@ -43,13 +43,13 @@ BEGIN
         )
     INTO versionStr;
 
-    INSERT INTO security.tblDeployment
+    INSERT INTO rel.tblDeployment
         (Version, Type)
     VALUES
         (versionStr, state);
 END;
 
-CALL security.DeclareDeployment('Start');
+CALL rel.DeclareDeployment('Start');
 
 /**************************************************/
 SELECT 'Ending 1.Pre_keep.sql';
