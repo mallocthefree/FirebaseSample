@@ -3,7 +3,7 @@
    This sample was created for sharing the code used in my blogging example on [my consulting website](https://JeremySnyder.Consulting)
    * [Quick And Dirty Security With Firebase](https://jeremysnyder.consulting/technology/quick-and-dirty-security-with-firebase)
    * [Simple Database Structure for Security](https://jeremysnyder.consulting/technology/simple-database-structure-for-security)
-   * [Not yet completed: Idempotent Database Scripting](https://jeremysnyder.consulting/technology)
+   * [Idempotent Database Scripting](https://jeremysnyder.consulting/technology/master-sql-scripting-structure)
    * [Not yet completed: Security Programming with .NET and Firebase](https://jeremysnyder.consulting/technology)
    
    Usage of these files is freely available as long as you mark a reference to the original site you found this within your code sample, either by the GitHub account or the referencing blog posting with the full URLs.
