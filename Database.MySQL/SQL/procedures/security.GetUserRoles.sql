@@ -6,7 +6,7 @@ DROP PROCEDURE IF EXISTS security.GetUserRoles;
 CREATE PROCEDURE security.GetUserRoles( IN pUserID BIGINT )
 BEGIN
 /**********************************************************************************************
-*   Copyright (c) Oso Vega, 2021
+*   Copyright (c) Jeremy Snyder Consulting, 2021
 *
 *   Initial Author:     Jeremy Snyder
 *   Initial Version:    March 30, 2021

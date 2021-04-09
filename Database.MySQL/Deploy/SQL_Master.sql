@@ -415,7 +415,7 @@ CREATE PROCEDURE security.AddUpdateUserRole
     )
 BEGIN
 /**********************************************************************************************
-*   Copyright (c) Oso Vega, 2021
+*   Copyright (c) Jeremy Snyder Consulting, 2021
 *
 *   Initial Author:     Jeremy Snyder
 *   Initial Version:    March 30, 2021
@@ -474,7 +474,7 @@ CREATE PROCEDURE security.CreateUpdateUser
     )
 BEGIN
 /**********************************************************************************************
-*   Copyright (c) Oso Vega, 2021
+*   Copyright (c) Jeremy Snyder Consulting, 2021
 *
 *   Initial Author:     Jeremy Snyder
 *   Initial Version:    March 30, 2021
@@ -550,7 +550,7 @@ CREATE PROCEDURE security.CreateUpdateUserIntegration
     )
 BEGIN
 /**********************************************************************************************
-*   Copyright (c) Oso Vega, 2021
+*   Copyright (c) Jeremy Snyder Consulting, 2021
 *
 *   Initial Author:     Jeremy Snyder
 *   Initial Version:    March 30, 2021
@@ -604,7 +604,7 @@ DROP PROCEDURE IF EXISTS security.GetRoles;
 CREATE PROCEDURE security.GetRoles()
 BEGIN
 /**********************************************************************************************
-*   Copyright (c) Oso Vega, 2021
+*   Copyright (c) Jeremy Snyder Consulting, 2021
 *
 *   Initial Author:     Jeremy Snyder
 *   Initial Version:    March 30, 2021
@@ -639,7 +639,7 @@ DROP PROCEDURE IF EXISTS security.GetUserByID;
 CREATE PROCEDURE security.GetUserByID( IN userID BIGINT )
 BEGIN
 /**********************************************************************************************
-*   Copyright (c) Oso Vega, 2021
+*   Copyright (c) Jeremy Snyder Consulting, 2021
 *
 *   Initial Author:     Jeremy Snyder
 *   Initial Version:    March 30, 2021
@@ -732,7 +732,7 @@ DROP PROCEDURE IF EXISTS security.GetUserRoles;
 CREATE PROCEDURE security.GetUserRoles( IN pUserID BIGINT )
 BEGIN
 /**********************************************************************************************
-*   Copyright (c) Oso Vega, 2021
+*   Copyright (c) Jeremy Snyder Consulting, 2021
 *
 *   Initial Author:     Jeremy Snyder
 *   Initial Version:    March 30, 2021
