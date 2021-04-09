@@ -9,6 +9,8 @@
 using System;
 using System.Linq;
 using System.Security.Claims;
+using JeremySnyder.Security.Data;
+using JeremySnyder.Security.Data.Enums;
 
 namespace JeremySnyder.Security
 {
@@ -42,7 +44,7 @@ namespace JeremySnyder.Security
         /// </summary>
         public void BuildInternalClaims()
         {
-            var userDTO = SecurityRepository.FindByExternalID(IntegrationTypes.Firebase, Identifier);
+            var userDTO = SecurityRepository.FindByExternalId(IntegrationTypes.Firebase, Identifier);
 
             // If not found by their identifier, it might be their first login attempt
             if (userDTO == null)
@@ -63,8 +65,6 @@ namespace JeremySnyder.Security
             var identity = new ClaimsIdentity(Principal.Identity.AuthenticationType);
             identity.AddClaim(new Claim(ClaimTypes.GivenName, userDTO.FirstName ?? string.Empty));
             identity.AddClaim(new Claim(ClaimTypes.Surname, userDTO.LastName ?? string.Empty));
-            identity.AddClaim(new Claim(ClaimTypes.MobilePhone, userDTO.PhoneNumber ?? string.Empty));
-            identity.AddClaim(new Claim(ClaimTypes.HomePhone, userDTO.PhoneNumber ?? string.Empty));
             identity.AddClaim(new Claim("UserID", userId.ToString(), ClaimValueTypes.Integer64));
 
             var roles = SecurityRepository.GetUserRoles(userId);

@@ -11,6 +11,11 @@
 
     <ItemGroup>
       <ProjectReference Include="..\JeremySnyder.Common\JeremySnyder.Common.csproj" />
+      <ProjectReference Include="..\JeremySnyder.Shared.Data\JeremySnyder.Shared.Data.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Data\Converters" />
     </ItemGroup>
 
 </Project>
