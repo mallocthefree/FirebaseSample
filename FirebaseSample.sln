@@ -6,8 +6,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JeremySnyder.Common", "Jere
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database.MySQL", "Database.MySQL\Database.MySQL.csproj", "{6FA4D165-8078-42BD-BE6D-FF8CD66157A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JeremySnyder.Database", "JeremySnyder.Database\JeremySnyder.Database.csproj", "{DFD4435F-51CF-4877-9228-3A8DC863E648}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JeremySnyder.Shared.Data", "JeremySnyder.Shared.Data\JeremySnyder.Shared.Data.csproj", "{5A52EEDB-32BD-40D4-8975-B66533A2EDB4}"
 EndProject
 Global
@@ -28,10 +26,6 @@ Global
 		{6FA4D165-8078-42BD-BE6D-FF8CD66157A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FA4D165-8078-42BD-BE6D-FF8CD66157A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FA4D165-8078-42BD-BE6D-FF8CD66157A4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DFD4435F-51CF-4877-9228-3A8DC863E648}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DFD4435F-51CF-4877-9228-3A8DC863E648}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DFD4435F-51CF-4877-9228-3A8DC863E648}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DFD4435F-51CF-4877-9228-3A8DC863E648}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5A52EEDB-32BD-40D4-8975-B66533A2EDB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5A52EEDB-32BD-40D4-8975-B66533A2EDB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A52EEDB-32BD-40D4-8975-B66533A2EDB4}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -14,8 +14,4 @@
       <ProjectReference Include="..\JeremySnyder.Shared.Data\JeremySnyder.Shared.Data.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Data\Converters" />
-    </ItemGroup>
-
 </Project>
