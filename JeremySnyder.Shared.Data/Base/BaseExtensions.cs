@@ -7,6 +7,7 @@
 /////////////////////////////////////////////////////////
 
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using JeremySnyder.Shared.Data.Base.DTO;
 using JeremySnyder.Shared.Data.Base.Models;

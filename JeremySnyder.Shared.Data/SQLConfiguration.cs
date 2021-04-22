@@ -7,18 +7,14 @@
 /////////////////////////////////////////////////////////
 
 using System;
-using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
-namespace JeremySnyder.Common.Database
+namespace JeremySnyder.Shared.Data
 {
     public class SQLConfiguration
     {
         [JsonProperty("Comment")]
         public string Comment { get; set; }
-        
-        [JsonProperty("UseProxy")]
-        public string Proxy { get; set; }
         
         [JsonProperty("CommandTimeout")]
         public string CommandTimeout { get; set; }

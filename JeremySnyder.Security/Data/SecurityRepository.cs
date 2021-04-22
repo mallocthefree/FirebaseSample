@@ -8,14 +8,19 @@
 
 using System.Collections.Generic;
 using JeremySnyder.Security.Data.DTO;
+using JeremySnyder.Security.Data.Enums;
+using JeremySnyder.Shared.Data;
 
 namespace JeremySnyder.Security.Data
 {
     internal static class SecurityRepository
     {
-        public static IEnumerable<UserRoleDTO> GetUserRoles(object userId)
+        private const string Schema = "security";
+        
+        public static IEnumerable<UserRoleDTO> GetUserRoles(long userId)
         {
-            throw new System.NotImplementedException();
+            return RepositoryBase.QueryWithWhere<UserRoleDTO>
+                (string.Empty, Schema, "GetUserRoles", userId.ToString());
         }
 
         public static UserDTO FindByEmail(string emailAddress)
@@ -23,12 +28,12 @@ namespace JeremySnyder.Security.Data
             throw new System.NotImplementedException();
         }
 
-        public static void Upsert(object userDTO)
+        public static void Upsert(UserDTO userDTO)
         {
             throw new System.NotImplementedException();
         }
 
-        public static UserDTO FindByExternalId(object firebase, string identifier)
+        public static UserDTO FindByExternalId(IntegrationTypes firebase, string identifier)
         {
             throw new System.NotImplementedException();
         }

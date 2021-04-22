@@ -106,5 +106,10 @@ namespace JeremySnyder.Common
 
             return result;
         }
+        
+        public static string GetValue(string section, string defaultValue = "")
+        {
+            return (string)_configuration.GetValue(typeof(string), section, defaultValue);
+        }
     }
 }
