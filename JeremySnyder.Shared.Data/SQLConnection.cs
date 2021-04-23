@@ -8,10 +8,10 @@
 
 using System;
 using System.Data;
-using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Globalization;
 using JeremySnyder.Common;
+using MySql.Data.MySqlClient;
 
 namespace JeremySnyder.Shared.Data
 {
@@ -79,7 +79,9 @@ namespace JeremySnyder.Shared.Data
         /// <returns>The connection object, which should be used within a using statement</returns>
         private static IDbConnection BuildConnection(SQLConfiguration configuration)
         {
-            return new SqlConnection(configuration.GetConnectionString());
+            var connectionString = configuration.GetConnectionString();
+            var connection = new MySqlConnection(connectionString);
+            return connection;
         }
         
         /// <summary>

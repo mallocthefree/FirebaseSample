@@ -22,7 +22,7 @@ namespace JeremySnyder.Shared.Data
                 using (var dbConnection = connection.Connection)
                 {
                     dbConnection.Open();
-                    string query = $"SELECT * FROM {schema}.{function}({parameterList}) fn {where};";
+                    string query = $"CALL {schema}.{function}({parameterList});";
                     var result = dbConnection.Query<T>
                     (
                         query,

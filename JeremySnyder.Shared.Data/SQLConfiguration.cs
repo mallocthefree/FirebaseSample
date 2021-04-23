@@ -31,9 +31,9 @@ namespace JeremySnyder.Shared.Data
         {
             string connectionString = ConnectionString;
             if (!string.IsNullOrWhiteSpace(connectionString) &&
-                !connectionString.Contains("CommandTimeout", StringComparison.InvariantCultureIgnoreCase))
+                !connectionString.Contains("Default Command Timeout", StringComparison.InvariantCultureIgnoreCase))
             {
-                connectionString = $"{connectionString}; CommandTimeout={CommandTimeout}";
+                connectionString = $"{connectionString}; Default Command Timeout={CommandTimeout}";
             }
 
             return connectionString;
