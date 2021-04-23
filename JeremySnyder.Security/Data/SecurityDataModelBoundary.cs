@@ -7,6 +7,8 @@
 /////////////////////////////////////////////////////////
 
 using System.Collections.Generic;
+using System.Linq;
+using JeremySnyder.Security.Data.Enums;
 using JeremySnyder.Security.Data.Models;
 using JeremySnyder.Shared.Data.Base;
 
@@ -28,6 +30,20 @@ namespace JeremySnyder.Security.Data
             }
 
             return userRoleModels;
+        }
+        
+        public static UserModel FindByExternalId(IntegrationTypes integrationType, string identifier)
+        {
+            var userModel = new UserModel();
+
+            var userDTO = SecurityRepository.FindByExternalId(integrationType, identifier);
+
+            userDTO?.ToModel(ref userModel);
+
+            userModel.Identifier = identifier;
+            userModel.Roles = GetUserRoles(userModel.ID).ToList();
+            
+            return userModel;
         }
     }
 }

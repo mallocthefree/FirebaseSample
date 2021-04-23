@@ -7,8 +7,10 @@
 /////////////////////////////////////////////////////////
 
 using System.Collections.Generic;
+using System.Linq;
 using JeremySnyder.Security.Data.DTO;
 using JeremySnyder.Security.Data.Enums;
+using JeremySnyder.Security.Data.Models;
 using JeremySnyder.Shared.Data;
 
 namespace JeremySnyder.Security.Data
@@ -19,7 +21,7 @@ namespace JeremySnyder.Security.Data
         
         public static IEnumerable<UserRoleDTO> GetUserRoles(long userId)
         {
-            return RepositoryBase.QueryWithWhere<UserRoleDTO>
+            return RepositoryBase.Query<UserRoleDTO>
                 (string.Empty, Schema, "GetUserRoles", userId.ToString());
         }
 
@@ -33,9 +35,22 @@ namespace JeremySnyder.Security.Data
             throw new System.NotImplementedException();
         }
 
-        public static UserDTO FindByExternalId(IntegrationTypes firebase, string identifier)
+        public static UserDTO FindByExternalId(IntegrationTypes integrationType, string identifier)
         {
-            throw new System.NotImplementedException();
+            var type = (int)integrationType;
+            var parameters = $"{type.ToString()}, '{identifier}'";
+            var userId = RepositoryBase.Query<long>
+                (string.Empty, Schema, "GetUserIDByExternalID", parameters)
+                .FirstOrDefault();
+
+            if (userId > 0)
+            {
+                return RepositoryBase.Query<UserDTO>
+                        (string.Empty, Schema, "GetUserByID", userId.ToString())
+                    .FirstOrDefault();
+            }
+
+            return null;
         }
     }
 }

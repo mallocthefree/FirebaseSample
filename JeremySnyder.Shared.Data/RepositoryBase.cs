@@ -15,7 +15,7 @@ namespace JeremySnyder.Shared.Data
 {
     public abstract class RepositoryBase
     {
-        public static IEnumerable<T> QueryWithWhere<T>(string connectionName, string schema, string function, string parameterList = "", object parameters = null, string where = "")
+        public static IEnumerable<T> Query<T>(string connectionName, string schema, string function, string parameterList = "", object parameters = null)
         {
             using (var connection = new SQLConnection(connectionName))
             {
