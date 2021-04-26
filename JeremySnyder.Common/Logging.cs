@@ -57,7 +57,7 @@ namespace JeremySnyder.Common
                 {
                     var fileTarget = (FileTarget) target;
                     var fileName = fileTarget.FileName;
-                    CreateLogDirectoryIfNotExists(fileName.ToString().Replace("'", string.Empty));
+                    CreateLogDirectoryIfNotExists(fileName.ToString()?.Replace("'", string.Empty));
                 }
             }
         }
@@ -77,6 +77,10 @@ namespace JeremySnyder.Common
             catch (Exception exception)
             {
                 // TODO: Send to an alternate messaging system
+                // Reasons to be here:
+                // 1. No access to file location
+                // 2. File is locked by another process
+                // 3. Drive is full
             }
         }
         
@@ -175,7 +179,8 @@ namespace JeremySnyder.Common
         }
         
         #region Filter
-        public static string FilterKeyWords(string message)
+
+        private static string FilterKeyWords(string message)
         {
             string result = "";
 

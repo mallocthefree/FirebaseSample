@@ -49,7 +49,7 @@ namespace JeremySnyder.Security
             if (userModel == null)
             {
                 userModel = SecurityDataModelBoundary.FindByEmail(EmailAddress);
-                userModel.Identifier = Identifier;
+                userModel.SecurityIdentifier = Identifier;
 
                 SecurityDataModelBoundary.AddUser(userModel);
             }

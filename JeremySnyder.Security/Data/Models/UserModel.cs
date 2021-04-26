@@ -17,17 +17,20 @@ namespace JeremySnyder.Security.Data.Models
     [Serializable]
     public class UserModel : BaseModelWithID
     {
-        [JsonProperty("firstName", Order = 2)] public string FirstName { get; set; }
+        [JsonProperty("firstName", Order = 2)]
+        public string FirstName { get; set; }
 
-        [JsonProperty("lastName", Order = 3)] public string LastName { get; set; }
+        [JsonProperty("lastName", Order = 3)]
+        public string LastName { get; set; }
 
         [JsonProperty("emailAddress", Order = 4)]
         public string EmailAddress { get; set; }
 
         [Required]
-        [JsonProperty("identifier", Order = 6)]
-        public string Identifier { get; set; }
+        [JsonProperty("securityIdentifier", Order = 6)]
+        public string SecurityIdentifier { get; set; }
 
-        [JsonProperty("roles")] public IList<UserRoleModel> Roles { get; set; } = new List<UserRoleModel>();
+        [JsonProperty("roles")]
+        public IList<UserRoleModel> Roles { get; set; } = new List<UserRoleModel>();
     }
 }

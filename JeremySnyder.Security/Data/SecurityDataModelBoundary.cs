@@ -51,7 +51,6 @@ namespace JeremySnyder.Security.Data
 
             userDTO?.ToModel(ref userModel);
 
-            userModel.Identifier = identifier;
             userModel.Roles = GetUserRoles(userModel.ID).ToList();
             
             return userModel;

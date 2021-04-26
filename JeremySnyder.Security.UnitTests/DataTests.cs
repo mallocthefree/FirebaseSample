@@ -29,8 +29,9 @@ namespace JeremySnyder.Security.UnitTests
         [Test]
         [Category("Integration Test")]
         [Category("Database")]
-        [TestCase("v2OcfN1HtPVm30JrSpfpnDhN3Tg1", "Jeremy", "Snyder")]
+        [TestCase("jeremysnyder.consulting@gmail.com", "v2OcfN1HtPVm30JrSpfpnDhN3Tg1", "Jeremy", "Snyder")]
         public void Test_GetUserBySecurityIdentifier_ShouldExist(
+            string emailAddress,
             string identifier,
             string firstName,
             string lastName)
@@ -39,7 +40,8 @@ namespace JeremySnyder.Security.UnitTests
             
             Assert.NotNull(user);
             Assert.AreEqual(1, user.ID);
-            Assert.AreEqual(identifier, user.Identifier);
+            Assert.AreEqual(emailAddress, user.EmailAddress);
+            Assert.AreEqual(identifier, user.SecurityIdentifier);
             Assert.AreEqual(firstName, user.FirstName);
             Assert.AreEqual(lastName, user.LastName);
             Assert.NotNull(user.Roles);
@@ -49,9 +51,10 @@ namespace JeremySnyder.Security.UnitTests
         [Test]
         [Category("Integration Test")]
         [Category("Database")]
-        [TestCase("jeremysnyder.consulting@gmail.com", "Jeremy", "Snyder")]
+        [TestCase("jeremysnyder.consulting@gmail.com", "v2OcfN1HtPVm30JrSpfpnDhN3Tg1", "Jeremy", "Snyder")]
         public void Test_GetUserByEmail_ShouldExist(
             string emailAddress,
+            string securityIdentifier,
             string firstName,
             string lastName)
         {
@@ -59,7 +62,8 @@ namespace JeremySnyder.Security.UnitTests
             
             Assert.NotNull(user);
             Assert.AreEqual(1, user.ID);
-            Assert.AreEqual(emailAddress, user.Identifier);
+            Assert.AreEqual(emailAddress, user.EmailAddress);
+            Assert.AreEqual(securityIdentifier, user.SecurityIdentifier);
             Assert.AreEqual(firstName, user.FirstName);
             Assert.AreEqual(lastName, user.LastName);
             Assert.NotNull(user.Roles);

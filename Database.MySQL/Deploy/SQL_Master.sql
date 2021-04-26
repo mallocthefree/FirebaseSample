@@ -670,11 +670,16 @@ BEGIN
            u.Name,
            u.FirstName,
            u.LastName,
-           ui.ExternalID,
+           userEmail.ExternalID AS EmailAddress,
+           ui.ExternalID AS SecurityIdentifier,
            u.Active
     FROM security.tblUsers u
+        LEFT OUTER JOIN security.tblUserIntegrations userEmail
+            ON u.ID = userEmail.UserID AND
+               userEmail.IntegrationID = 1 /* Email */
         LEFT OUTER JOIN security.tblUserIntegrations ui
-            ON u.ID = ui.UserID AND ui.IntegrationID = 1 /* Currently enforce only Firebase in response */
+            ON u.ID = ui.UserID AND
+               ui.IntegrationID = 2 /* Currently enforce only Firebase in response */
     WHERE u.ID = userID;
 /* Additional note:
    ui.IntegrationID = 1 could also have been part of the WHERE clause. I add it to the join because it

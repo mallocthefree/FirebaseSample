@@ -15,7 +15,7 @@ namespace JeremySnyder.Security.Data.DTO
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string EmailAddress { get; set; }
-        public string Identifier { get; set; }
+        public string SecurityIdentifier { get; set; }
         public bool Active { get; set; }
     }
 }
