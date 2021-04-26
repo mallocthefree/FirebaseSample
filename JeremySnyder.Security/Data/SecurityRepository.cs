@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using JeremySnyder.Security.Data.DTO;
 using JeremySnyder.Security.Data.Enums;
-using JeremySnyder.Security.Data.Models;
 using JeremySnyder.Shared.Data;
 
 namespace JeremySnyder.Security.Data
@@ -23,11 +22,6 @@ namespace JeremySnyder.Security.Data
         {
             return RepositoryBase.Query<UserRoleDTO>
                 (string.Empty, Schema, "GetUserRoles", userId.ToString());
-        }
-
-        public static UserDTO FindByEmail(string emailAddress)
-        {
-            throw new System.NotImplementedException();
         }
 
         public static void Upsert(UserDTO userDTO)

@@ -4,7 +4,8 @@ CREATE TEMPORARY TABLE IF NOT EXISTS security_integrations SELECT * FROM securit
 INSERT INTO security_integrations
 (ID, IntegrationName, Active)
 VALUES
-(1, 'Firebase', 1);
+(1, 'Email', 1),
+(2, 'Firebase', 1);
 
 INSERT INTO
     security.lookup_Integrations

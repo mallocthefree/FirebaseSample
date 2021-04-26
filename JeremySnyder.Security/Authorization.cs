@@ -10,7 +10,6 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using JeremySnyder.Security.Data;
-using JeremySnyder.Security.Data.Enums;
 
 namespace JeremySnyder.Security
 {
@@ -44,27 +43,28 @@ namespace JeremySnyder.Security
         /// </summary>
         public void BuildInternalClaims()
         {
-            var userDTO = SecurityRepository.FindByExternalId(IntegrationTypes.Firebase, Identifier);
+            var userModel = SecurityDataModelBoundary.FindBySecurityIdentifier(Identifier);
 
             // If not found by their identifier, it might be their first login attempt
-            if (userDTO == null)
+            if (userModel == null)
             {
-                userDTO = SecurityRepository.FindByEmail(EmailAddress);
-                userDTO.Identifier = Identifier;
-                SecurityRepository.Upsert(userDTO);
+                userModel = SecurityDataModelBoundary.FindByEmail(EmailAddress);
+                userModel.Identifier = Identifier;
+
+                SecurityDataModelBoundary.AddUser(userModel);
             }
 
             // if it's still null, then they did not exist in HubSpot the last time we pulled
-            if (userDTO == null)
+            if (userModel == null)
             {
                 throw new Exception("Cannot identify or create the user in the database");
             }
 
-            var userId = userDTO.ID;
+            var userId = userModel.ID;
 
             var identity = new ClaimsIdentity(Principal.Identity.AuthenticationType);
-            identity.AddClaim(new Claim(ClaimTypes.GivenName, userDTO.FirstName ?? string.Empty));
-            identity.AddClaim(new Claim(ClaimTypes.Surname, userDTO.LastName ?? string.Empty));
+            identity.AddClaim(new Claim(ClaimTypes.GivenName, userModel.FirstName ?? string.Empty));
+            identity.AddClaim(new Claim(ClaimTypes.Surname, userModel.LastName ?? string.Empty));
             identity.AddClaim(new Claim("UserID", userId.ToString(), ClaimValueTypes.Integer64));
 
             var roles = SecurityRepository.GetUserRoles(userId);

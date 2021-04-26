@@ -93,7 +93,8 @@ CREATE TEMPORARY TABLE IF NOT EXISTS security_userIntegrations SELECT * FROM sec
 INSERT INTO security_userIntegrations
 (UserID, IntegrationID, ExternalID)
 VALUES
-(1, 1, 'v2OcfN1HtPVm30JrSpfpnDhN3Tg1');
+(1, 1, 'jeremysnyder.consulting@gmail.com'),
+(1, 2, 'v2OcfN1HtPVm30JrSpfpnDhN3Tg1');
 
 INSERT INTO
     security.tblUserIntegrations

@@ -8,6 +8,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using JeremySnyder.Security.Data.DTO;
 using JeremySnyder.Security.Data.Enums;
 using JeremySnyder.Security.Data.Models;
 using JeremySnyder.Shared.Data.Base;
@@ -32,7 +33,17 @@ namespace JeremySnyder.Security.Data
             return userRoleModels;
         }
         
-        public static UserModel FindByExternalId(IntegrationTypes integrationType, string identifier)
+        public static UserModel FindByEmail(string emailAddress)
+        {
+            return FindBySecurityIdentifier(IntegrationTypes.Email, emailAddress);
+        }
+        
+        public static UserModel FindBySecurityIdentifier(string identifier)
+        {
+            return FindBySecurityIdentifier(IntegrationTypes.Firebase, identifier);
+        }
+        
+        private static UserModel FindBySecurityIdentifier(IntegrationTypes integrationType, string identifier)
         {
             var userModel = new UserModel();
 
@@ -44,6 +55,13 @@ namespace JeremySnyder.Security.Data
             userModel.Roles = GetUserRoles(userModel.ID).ToList();
             
             return userModel;
+        }
+
+        public static void AddUser(UserModel userModel)
+        {
+            var userDTO = new UserDTO();
+            userModel.ToDTO(ref userDTO);
+            SecurityRepository.Upsert(userDTO);
         }
     }
 }

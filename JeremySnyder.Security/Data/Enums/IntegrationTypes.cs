@@ -10,6 +10,7 @@ namespace JeremySnyder.Security.Data.Enums
 {
     public enum IntegrationTypes
     {
-        Firebase = 1
+        Email = 1,
+        Firebase = 2
     }
 }
