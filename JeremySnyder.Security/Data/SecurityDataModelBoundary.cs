@@ -40,7 +40,7 @@ namespace JeremySnyder.Security.Data
         
         public static UserModel FindBySecurityIdentifier(string identifier)
         {
-            return FindBySecurityIdentifier(IntegrationTypes.Firebase, identifier);
+            return FindBySecurityIdentifier(SecurityRepository.SecurityIntegration, identifier);
         }
         
         private static UserModel FindBySecurityIdentifier(IntegrationTypes integrationType, string identifier)
@@ -56,11 +56,16 @@ namespace JeremySnyder.Security.Data
             return userModel;
         }
 
-        public static void AddUser(UserModel userModel)
+        public static UserModel AddUser(UserModel userModel)
         {
             var userDTO = new UserDTO();
             userModel.ToDTO(ref userDTO);
-            SecurityRepository.Upsert(userDTO);
+            userDTO.Active = true;
+            var resultDTO = SecurityRepository.Upsert(userDTO);
+            var resultModel = new UserModel();
+            resultDTO.ToModel(ref resultModel);
+
+            return resultModel;
         }
     }
 }

@@ -31,8 +31,8 @@ BEGIN
 *
 *   Examples:
 
-    CALL security.CreateUpdateUser ( 1, 'Test User', 'Jeremy', 'Snyder', 1, 1, 'v2OcfN1HtPVm30JrSpfpnDhN3Tg1' );
-    CALL security.CreateUpdateUser ( NULL, 'Other Test User', 'Jeremy', 'Snyder', 1, 1, 'testKey' );
+    CALL security.CreateUpdateUser ( 1, 'Test User', 'Jeremy', 'Snyder', 1, 2, 'v2OcfN1HtPVm30JrSpfpnDhN3Tg1' );
+    CALL security.CreateUpdateUser ( NULL, 'Other Test User', 'Jeremy', 'Snyder', 1, 2, 'testKey' );
 
 ***********************************************************************************************/
 
