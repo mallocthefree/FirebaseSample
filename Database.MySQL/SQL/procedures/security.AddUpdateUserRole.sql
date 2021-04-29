@@ -50,6 +50,4 @@ BEGIN
         (pUserID, pRoleID, pActive);
     END IF;
 
-    CALL security.GetUserRoles(pUserID);
-
 END;

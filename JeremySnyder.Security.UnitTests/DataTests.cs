@@ -6,8 +6,10 @@
 // <date>April 22, 2021</date>
 /////////////////////////////////////////////////////////
 
+using System.Linq;
 using NUnit.Framework;
 using JeremySnyder.Security.Data;
+using JeremySnyder.Security.Data.Enums;
 using JeremySnyder.Security.Data.Models;
 
 namespace JeremySnyder.Security.UnitTests
@@ -108,6 +110,79 @@ namespace JeremySnyder.Security.UnitTests
             Assert.AreEqual(lastName, user.LastName);
             Assert.NotNull(user.Roles);
             Assert.IsNotEmpty(user.Roles);
+        }
+        
+        [Test]
+        [Category("Integration Test")]
+        [Category("Database")]
+        [TestCase(1, "UnitTest.NotReal@gmail.com")]
+        [TestCase(2, "UnitTest.NotReal@gmail.com" )]
+        public void Test_AddUserRoles_ShouldAdd(long roleId, string emailAddress)
+        {
+            var userModel = SecurityDataModelBoundary.FindByEmail(emailAddress);
+
+            if (userModel?.ID == 0)
+            {
+                Assert.Inconclusive("Invalid test email");
+            }
+            
+            var alreadyHas = userModel.Roles.Any(r => r.RoleID == roleId);
+
+            if (alreadyHas)
+            {
+                SecurityDataModelBoundary.RemoveUserRole(userModel.ID, (SecurityRoles)roleId);
+            }
+            
+            var roles = SecurityDataModelBoundary.GetUserRoles(userModel.ID);
+            alreadyHas = roles.Any(r => r.RoleID == roleId);
+
+            if (alreadyHas)
+            {
+                Assert.Inconclusive("Cannot test because the role already exists and removal has failed");
+            }
+
+            SecurityDataModelBoundary.AddUserRole(userModel.ID, (SecurityRoles)roleId);
+            roles = SecurityDataModelBoundary.GetUserRoles(userModel.ID);
+            
+            Assert.NotNull(roles);
+            Assert.AreEqual(emailAddress, userModel.EmailAddress);
+            Assert.IsTrue(roles.Any(r => r.RoleID == roleId));
+        }
+        
+        [Test]
+        [Category("Integration Test")]
+        [Category("Database")]
+        [TestCase(1, "UnitTest.NotReal@gmail.com" )]
+        public void Test_RemoveUserRole_ShouldRemove(long roleId, string emailAddress)
+        {
+            var userModel = SecurityDataModelBoundary.FindByEmail(emailAddress);
+
+            if (userModel?.ID == 0)
+            {
+                Assert.Inconclusive("Invalid test email");
+            }
+            
+            var alreadyHas = userModel.Roles.Any(r => r.RoleID == roleId);
+
+            if (!alreadyHas)
+            {
+                SecurityDataModelBoundary.AddUserRole(userModel.ID, (SecurityRoles)roleId);
+            }
+            
+            var roles = SecurityDataModelBoundary.GetUserRoles(userModel.ID);
+            alreadyHas = roles.Any(r => r.RoleID == roleId);
+
+            if (!alreadyHas)
+            {
+                Assert.Inconclusive("Cannot test because the role didn't exist already and adding failed");
+            }
+
+            SecurityDataModelBoundary.RemoveUserRole(userModel.ID, (SecurityRoles)roleId);
+            roles = SecurityDataModelBoundary.GetUserRoles(userModel.ID);
+            
+            Assert.NotNull(roles);
+            Assert.AreEqual(emailAddress, userModel.EmailAddress);
+            Assert.IsTrue(roles.All(r => r.RoleID != roleId));
         }
     }
 }

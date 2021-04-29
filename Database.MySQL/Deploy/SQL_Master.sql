@@ -455,8 +455,6 @@ BEGIN
         (pUserID, pRoleID, pActive);
     END IF;
 
-    CALL security.GetUserRoles(pUserID);
-
 END;
 
 SELECT 'Creating function security.CreateUpdateUser';
