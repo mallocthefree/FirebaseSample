@@ -15,6 +15,14 @@ using JeremySnyder.Shared.Data.Base;
 
 namespace JeremySnyder.Security.Data
 {
+    /// <summary>
+    /// The purpose of a DataModel Boundary is to create a layer between the user, which can include the system itself,
+    /// and the data in the database. It enforces a level of indirection for operational consistency between the
+    /// MVC/MVVM parts of the system and the database.
+    /// 
+    /// It's a place where the developer can implement data transforms between enums and numbers, decimals and integers,
+    /// presentation decimal accuracy (rounding), currency presentation (or calculation), and string manipulations.
+    /// </summary>
     public static class SecurityDataModelBoundary
     {
         /// <summary>
@@ -39,20 +47,20 @@ namespace JeremySnyder.Security.Data
         }
         
         /// <summary>
-        /// 
+        /// Find the user details for a provided email address
         /// </summary>
         /// <param name="emailAddress"></param>
-        /// <returns></returns>
+        /// <returns>user details <seealso cref="UserModel"/></returns>
         public static UserModel FindByEmail(string emailAddress)
         {
             return FindBySecurityIdentifier(IntegrationTypes.Email, emailAddress);
         }
         
         /// <summary>
-        /// 
+        /// Find user details using the defined authentication security integration external identifier
         /// </summary>
         /// <param name="identifier"></param>
-        /// <returns></returns>
+        /// <returns>user details <seealso cref="UserModel"/></returns>
         public static UserModel FindBySecurityIdentifier(string identifier)
         {
             return FindBySecurityIdentifier(SecurityRepository.SecurityIntegration, identifier);
@@ -61,9 +69,9 @@ namespace JeremySnyder.Security.Data
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="integrationType"></param>
-        /// <param name="identifier"></param>
-        /// <returns></returns>
+        /// <param name="integrationType">Integration Type <seealso cref="IntegrationTypes"/></param>
+        /// <param name="identifier">String indicating the external id for the given integration type</param>
+        /// <returns>user details <seealso cref="UserModel"/></returns>
         private static UserModel FindBySecurityIdentifier(IntegrationTypes integrationType, string identifier)
         {
             var userModel = new UserModel();
@@ -78,10 +86,10 @@ namespace JeremySnyder.Security.Data
         }
 
         /// <summary>
-        /// 
+        /// Add a user
         /// </summary>
-        /// <param name="userModel"></param>
-        /// <returns></returns>
+        /// <param name="userModel">user details <seealso cref="UserModel"/></param>
+        /// <returns>user details <seealso cref="UserModel"/></returns>
         public static UserModel AddUser(UserModel userModel)
         {
             var userDTO = new UserDTO();
@@ -95,12 +103,13 @@ namespace JeremySnyder.Security.Data
         }
 
         /// <summary>
-        /// Update all roles that should be available to the user
+        /// Update all roles that should be available to the user.
+        /// NOTE: Anything in the system that is not in this list will be disabled.
         /// </summary>
         /// <param name="userId">User ID ( security.tblUsers.ID )</param>
         /// <param name="activeRoles">Complete list of all roles that should be available to the user</param>
         /// <returns>Final list of active roles for the user</returns>
-        public static IEnumerable<UserRoleModel> UpdateUserRoles(long userId, IEnumerable<long> activeRoles)
+        public static IEnumerable<UserRoleModel> UpdateUserRoles(long userId, IEnumerable<SecurityRoles> activeRoles)
         {
             var currentRoles = SecurityRepository.GetUserRoles(userId);
 
@@ -111,18 +120,19 @@ namespace JeremySnyder.Security.Data
             var currentUserRoleList = currentRoles.ToList();
             foreach (var currentRole in currentUserRoleList)
             {
-                if (!activeRolesList.Contains(currentRole.RoleID))
+                var roleId = (SecurityRoles)currentRole.RoleID;
+                if (!activeRolesList.Contains(roleId))
                 {
-                    AddUserRole(userId, (SecurityRoles)currentRole.RoleID);
+                    AddUserRole(userId, roleId);
                 }
             }
             
             // Remove any roles not in the new active list
             foreach (var role in activeRolesList)
             {
-                if (currentUserRoleList.All(r => r.RoleID != role))
+                if (currentUserRoleList.All(r => r.RoleID != (long)role))
                 {
-                    RemoveUserRole(userId, (SecurityRoles)role);
+                    RemoveUserRole(userId, role);
                 }
             }
             

@@ -14,11 +14,20 @@ using JeremySnyder.Shared.Data;
 
 namespace JeremySnyder.Security.Data
 {
+    /// <summary>
+    /// Calls to the "security" schema within the database.
+    /// "Internal" prevents direct external abuse through the library.
+    /// </summary>
     internal static class SecurityRepository
     {
         private const string Schema = "security";
         public const IntegrationTypes SecurityIntegration = IntegrationTypes.Firebase;
         
+        /// <summary>
+        /// Get all of the roles as an <seealso cref="IEnumerable{UserRoleDTO}"/>
+        /// </summary>
+        /// <param name="userId">UserID to fetch the roles list for</param>
+        /// <returns>List of roles for the given user <seealso cref="IEnumerable{UserRoleDTO}"/></returns>
         public static IEnumerable<UserRoleDTO> GetUserRoles(long userId)
         {
             return RepositoryBase.Query<UserRoleDTO>
@@ -26,12 +35,13 @@ namespace JeremySnyder.Security.Data
         }
 
         /// <summary>
-        /// 
+        /// Update the status of a user's role by UserID and RoleID
+        /// Deactivation does not delete the record, but they should not retain access in the system with the flag disabled.
         /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="roleId"></param>
-        /// <param name="active"></param>
-        /// <returns></returns>
+        /// <param name="userId">UserID ( security.tblUsers )</param>
+        /// <param name="roleId">RoleID ( security.lookup_Roles )</param>
+        /// <param name="active">active = 1 adds, active = 0 deactivates the role for the user.</param>
+        /// <returns>None</returns>
         public static void UpdateUserRole(long userId, long roleId, bool active)
         {
             // Note that in a strict security environment, this should also log a record for the change.

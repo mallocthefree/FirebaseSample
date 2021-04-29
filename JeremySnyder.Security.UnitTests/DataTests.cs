@@ -130,6 +130,7 @@ namespace JeremySnyder.Security.UnitTests
 
             if (alreadyHas)
             {
+                // It's worth noting that because we made it here, the test WILL update the updated timestamp
                 SecurityDataModelBoundary.RemoveUserRole(userModel.ID, (SecurityRoles)roleId);
             }
             
@@ -166,6 +167,7 @@ namespace JeremySnyder.Security.UnitTests
 
             if (!alreadyHas)
             {
+                // It's worth noting that because we made it here, the test WILL update the updated timestamp
                 SecurityDataModelBoundary.AddUserRole(userModel.ID, (SecurityRoles)roleId);
             }
             
