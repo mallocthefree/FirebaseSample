@@ -17,6 +17,15 @@ namespace JeremySnyder.Security.UnitTests
     [TestFixture]
     public class DataTests
     {
+        /// <summary>
+        /// Added regularly used test strings here so that they can be changed easily to match a new use case
+        /// </summary>
+        private const string UnitTestKeyReal = "v2OcfN1HtPVm30JrSpfpnDhN3Tg1";
+        private const string UnitTestEmailReal = "jeremysnyder.consulting@gmail.com";
+        private const string UnitTestFirstNameReal = "Jeremy";
+        private const string UnitTestLastNameReal = "Snyder";
+        private const string UnitTestEmailBogus = "UnitTest.NotReal@gmail.com";
+
         [Test]
         [Category("Integration Test")]
         [Category("Database")]
@@ -32,9 +41,9 @@ namespace JeremySnyder.Security.UnitTests
         [Test]
         [Category("Integration Test")]
         [Category("Database")]
-        [TestCase(0, true, "UnitTest.NotReal@gmail.com", null, "Unit", "Test")]
-        [TestCase(1, false, "jeremysnyder.Changed@gmail.com", "v2OcfN1HtPVm30JrSpfpnDhN3Tg1", "Jeremy", "Snyder")]
-        [TestCase(1, true, "jeremysnyder.consulting@gmail.com", "v2OcfN1HtPVm30JrSpfpnDhN3Tg1", "Jeremy", "Snyder")]
+        [TestCase(0, true, UnitTestEmailBogus, null, "Unit", "Test")]
+        [TestCase(1, false, "jeremysnyder.Changed@gmail.com", UnitTestKeyReal, UnitTestFirstNameReal, UnitTestLastNameReal)]
+        [TestCase(1, true, UnitTestEmailReal, UnitTestKeyReal, UnitTestFirstNameReal, UnitTestLastNameReal)]
         public void Test_UpsertUser_ShouldCreate(
             long id,
             bool active,
@@ -69,7 +78,7 @@ namespace JeremySnyder.Security.UnitTests
         [Test]
         [Category("Integration Test")]
         [Category("Database")]
-        [TestCase(1, "jeremysnyder.consulting@gmail.com", "v2OcfN1HtPVm30JrSpfpnDhN3Tg1", "Jeremy", "Snyder")]
+        [TestCase(1, UnitTestEmailReal, UnitTestKeyReal, UnitTestFirstNameReal, UnitTestLastNameReal)]
         public void Test_GetUserBySecurityIdentifier_ShouldExist(
             long id,
             string emailAddress,
@@ -92,7 +101,7 @@ namespace JeremySnyder.Security.UnitTests
         [Test]
         [Category("Integration Test")]
         [Category("Database")]
-        [TestCase(1, "jeremysnyder.consulting@gmail.com", "v2OcfN1HtPVm30JrSpfpnDhN3Tg1", "Jeremy", "Snyder")]
+        [TestCase(1, UnitTestEmailReal, UnitTestKeyReal, UnitTestFirstNameReal, UnitTestLastNameReal)]
         public void Test_GetUserByEmail_ShouldExist(
             long id,
             string emailAddress,
@@ -115,8 +124,8 @@ namespace JeremySnyder.Security.UnitTests
         [Test]
         [Category("Integration Test")]
         [Category("Database")]
-        [TestCase(1, "UnitTest.NotReal@gmail.com")]
-        [TestCase(2, "UnitTest.NotReal@gmail.com" )]
+        [TestCase(1, UnitTestEmailBogus)]
+        [TestCase(2, UnitTestEmailBogus )]
         public void Test_AddUserRoles_ShouldAdd(long roleId, string emailAddress)
         {
             var userModel = SecurityDataModelBoundary.FindByEmail(emailAddress);
@@ -153,7 +162,7 @@ namespace JeremySnyder.Security.UnitTests
         [Test]
         [Category("Integration Test")]
         [Category("Database")]
-        [TestCase(1, "UnitTest.NotReal@gmail.com" )]
+        [TestCase(1, UnitTestEmailBogus )]
         public void Test_RemoveUserRole_ShouldRemove(long roleId, string emailAddress)
         {
             var userModel = SecurityDataModelBoundary.FindByEmail(emailAddress);

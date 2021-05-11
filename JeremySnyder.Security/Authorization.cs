@@ -15,6 +15,10 @@ namespace JeremySnyder.Security
 {
     public sealed class Authorization
     {
+        // If true, then  create users not found in the database.
+        // If false, reject the user if not found.
+        private const bool AutoCreateUsers = false;
+        
         public ClaimsPrincipal Principal { get; }
         public string EmailAddress { get; }
         public string Identifier { get; }
@@ -46,7 +50,8 @@ namespace JeremySnyder.Security
             var userModel = SecurityDataModelBoundary.FindBySecurityIdentifier(Identifier);
 
             // If not found by their identifier, it might be their first login attempt
-            if (userModel == null)
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            if (userModel == null && AutoCreateUsers)
             {
                 userModel = SecurityDataModelBoundary.FindByEmail(EmailAddress);
                 userModel.SecurityIdentifier = Identifier;
