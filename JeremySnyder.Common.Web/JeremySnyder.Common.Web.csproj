@@ -15,6 +15,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\JeremySnyder.Common\JeremySnyder.Common.csproj" />
+      <ProjectReference Include="..\JeremySnyder.Security\JeremySnyder.Security.csproj" />
       <ProjectReference Include="..\JeremySnyder.Shared.Data\JeremySnyder.Shared.Data.csproj" />
     </ItemGroup>
 

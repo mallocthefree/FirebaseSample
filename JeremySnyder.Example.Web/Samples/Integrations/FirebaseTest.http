@@ -1,0 +1,27 @@
+
+
+###################
+# Description: Log in as a test user to get a token
+POST https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAPKb9nkIuoGX7modNwbh4oOzx-zfoV19g
+Accept: application/json
+Content-Type: application/json
+
+{
+  "email": "testuser@jeremysnyder.consulting",
+  "password": "TestingTesting123!",
+  "returnSecureToken": "true"
+}
+###################
+
+###################
+# Description: Log in as a test user to get a token
+POST https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAPKb9nkIuoGX7modNwbh4oOzx-zfoV19g
+Accept: application/json
+Content-Type: application/json
+
+{
+  "email": "testuser@notarealaddress.com",
+  "password": "invalid_Password",
+  "returnSecureToken": "true"
+}
+###################

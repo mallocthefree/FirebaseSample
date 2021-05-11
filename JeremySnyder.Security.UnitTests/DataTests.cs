@@ -41,6 +41,19 @@ namespace JeremySnyder.Security.UnitTests
         [Test]
         [Category("Integration Test")]
         [Category("Database")]
+        [TestCase(1)]
+        public void Test_GetUserByID_ShouldExistWithAtLeastOneRole(long userId)
+        {
+            var user = SecurityDataModelBoundary.FindById(userId);
+            
+            Assert.NotNull(user);
+            Assert.NotNull(user.Roles);
+            Assert.IsNotEmpty(user.Roles);
+        }
+        
+        [Test]
+        [Category("Integration Test")]
+        [Category("Database")]
         [TestCase(0, true, UnitTestEmailBogus, null, "Unit", "Test")]
         [TestCase(1, false, "jeremysnyder.Changed@gmail.com", UnitTestKeyReal, UnitTestFirstNameReal, UnitTestLastNameReal)]
         [TestCase(1, true, UnitTestEmailReal, UnitTestKeyReal, UnitTestFirstNameReal, UnitTestLastNameReal)]

@@ -152,5 +152,17 @@ namespace JeremySnyder.Security.Data
 
             return null;
         }
+        
+        /// <summary>
+        /// Find a User DTO using a specific userID
+        /// </summary>
+        /// <param name="userId">The internal userID in the security.tblUsers table</param>
+        /// <returns>Located User DTO if found. null if not found.</returns>
+        public static UserDTO FindById(long userId)
+        {
+            return RepositoryBase.Query<UserDTO>
+                    (string.Empty, Schema, "GetUserByID", userId.ToString())
+                .FirstOrDefault();
+        }
     }
 }

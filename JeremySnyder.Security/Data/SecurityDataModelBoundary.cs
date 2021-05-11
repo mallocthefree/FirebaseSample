@@ -67,6 +67,24 @@ namespace JeremySnyder.Security.Data
         }
         
         /// <summary>
+        /// Find user details using the defined authentication security integration external identifier
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns>user details <seealso cref="UserModel"/></returns>
+        public static UserModel FindById(long userId)
+        {
+            var userModel = new UserModel();
+
+            var userDTO = SecurityRepository.FindById(userId);
+
+            userDTO?.ToModel(ref userModel);
+
+            userModel.Roles = GetUserRoles(userModel.ID).ToList();
+            
+            return userModel;
+        }
+        
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="integrationType">Integration Type <seealso cref="IntegrationTypes"/></param>

@@ -13,7 +13,7 @@ using JeremySnyder.Security.Data;
 
 namespace JeremySnyder.Security
 {
-    public sealed class Authorization
+    public sealed class JeremySnyderAuthorization
     {
         // If true, then  create users not found in the database.
         // If false, reject the user if not found.
@@ -23,7 +23,7 @@ namespace JeremySnyder.Security
         public string EmailAddress { get; }
         public string Identifier { get; }
         
-        public Authorization(ClaimsPrincipal principal)
+        public JeremySnyderAuthorization(ClaimsPrincipal principal)
         {
             EmailAddress = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? string.Empty;
             Identifier = principal.Claims.FirstOrDefault(c => c.Type == "user_id")?.Value ?? string.Empty;
