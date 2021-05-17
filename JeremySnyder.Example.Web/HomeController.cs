@@ -16,6 +16,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JeremySnyder.Example.Web
 {
+    /// <summary>
+    /// Home route for basic API calls
+    /// </summary>
     [ApiController]
     [Route("api/Home")]
     public class HomeController : JeremySnyderController

@@ -6,6 +6,10 @@
         <LangVersion>8</LangVersion>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <DocumentationFile>bin\Debug\JeremySnyder.Example.Web.xml</DocumentationFile>
+    </PropertyGroup>
+
     <ItemGroup>
       <ProjectReference Include="..\JeremySnyder.Common.Web\JeremySnyder.Common.Web.csproj" />
       <ProjectReference Include="..\JeremySnyder.Security\JeremySnyder.Security.csproj" />
@@ -24,6 +28,8 @@
       <Content Include="appsettings.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
+      <None Remove="secretKey.json" />
+      <Content Include="YouNeedToGetYourOwnKeyForThisToWork.json" />
     </ItemGroup>
 
 </Project>

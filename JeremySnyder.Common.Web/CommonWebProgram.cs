@@ -22,6 +22,11 @@ namespace JeremySnyder.Common.Web
     public abstract class CommonWebProgram
     {
         public static IConfiguration Configuration { get; set; }
+        
+        /// <summary>
+        /// Set up logging levels and other logging configurations using the chosen logging system
+        /// </summary>
+        /// <param name="appSettingsPath">Full path to the appsettings.json file, including the file name</param>
         private static void LogSettings(string appSettingsPath)
         {
             if (!File.Exists(appSettingsPath))
@@ -45,6 +50,11 @@ namespace JeremySnyder.Common.Web
             }
         }
 
+        /// <summary>
+        /// Sets up configurations I like to apply to most of my web APIs, so why not write it only once?
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
         protected static IWebHostBuilder CommonWebHostBuilder(string[] args)
         {
             SystemState.EnvironmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");

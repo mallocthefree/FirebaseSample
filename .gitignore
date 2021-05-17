@@ -8,3 +8,5 @@ packages
 **/bin/
 **/Debug/
 **/Release/
+secretKey.json
+YouNeedToGetYourOwnKeyForThisToWork.json

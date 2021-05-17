@@ -76,7 +76,7 @@ namespace JeremySnyder.Common
             }
             catch (Exception exception)
             {
-                // TODO: Send to an alternate messaging system
+                // TODO: Send to an alternate messaging system (e.g., Slack)
                 // Reasons to be here:
                 // 1. No access to file location
                 // 2. File is locked by another process

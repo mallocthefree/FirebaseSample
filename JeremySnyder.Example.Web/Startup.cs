@@ -28,21 +28,33 @@ using Swashbuckle.AspNetCore.Filters;
 namespace JeremySnyder.Example.Web
 {
     [ExcludeFromCodeCoverage]
-    public class Startup
+    internal class Startup
     {
         #region Properties
+        // ReSharper disable UnusedAutoPropertyAccessor.Local
         private IConfiguration Configuration { get; }
         private IWebHostEnvironment Environment { get; }
+        // ReSharper restore UnusedAutoPropertyAccessor.Local
         #endregion
 
         private const string CorsAllowSpecificOrigins = "AllowSpecificOrigin";
 
+        /// <summary>
+        /// Called by the runtime
+        /// </summary>
+        /// <param name="configuration">Application configuration (built-in)</param>
+        /// <param name="env">System environment (built-in)</param>
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
             Environment = env;
         }
 
+        /// <summary>
+        /// Allows us to bypass security during debug-time only. Flip the configuration value
+        /// in appsettings.config
+        /// Note: This setting will not impact systems running without a debugger.
+        /// </summary>
         private static bool SecurityEnabled =>
             (    
                 Debugger.IsAttached &&
@@ -51,7 +63,10 @@ namespace JeremySnyder.Example.Web
                     .Contains("true", StringComparison.InvariantCultureIgnoreCase)
             ) == false;
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to add services to the container.
+        /// </summary>
+        /// <param name="services">Built-in parameter sent by the runtime</param>
         public void ConfigureServices(IServiceCollection services)
         {
             Logging.Info("Startup.ConfigureServices initiated");
@@ -121,7 +136,8 @@ namespace JeremySnyder.Example.Web
                 var xmlFile = $"{assembly.GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
-                
+
+                /*
                 xmlPath = Path.Combine(AppContext.BaseDirectory, "JeremySnyder.Data.xml");
                 c.IncludeXmlComments(xmlPath);
                 
@@ -130,10 +146,18 @@ namespace JeremySnyder.Example.Web
                 
                 xmlPath = Path.Combine(AppContext.BaseDirectory, "JeremySnyder.Shared.Data.xml");
                 c.IncludeXmlComments(xmlPath);
+                */
             });
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        // ReSharper disable once UnusedMember.Global
+        /// <summary>
+        /// Called automatically during the startup processes in a higher level of the web core.
+        /// Configurations to the web API are managed here.
+        /// </summary>
+        /// <param name="app">Information about this application and it's base configuration</param>
+        /// <param name="env">Information about the environment the API is run on</param>
         public void Configure(IApplicationBuilder app, IHostEnvironment env)
         {
             Logging.Info("Startup.Configure initiated");
@@ -193,6 +217,12 @@ namespace JeremySnyder.Example.Web
             */
         }
         
+        /// <summary>
+        /// Builds our CORS ( https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS ),
+        /// which is needed for testing on the same system or for running a system
+        /// that targets this API from the same computer.
+        /// </summary>
+        /// <param name="services">Built-in parameter sent from <seealso cref="ConfigureServices"/></param>
         private static void ConfigureCors(IServiceCollection services)
         {
             services.AddCors(options =>
@@ -212,6 +242,10 @@ namespace JeremySnyder.Example.Web
                     }));
         }
 
+        /// <summary>
+        /// Configures our authentication integration, which is currently "Firebase"
+        /// </summary>
+        /// <param name="services">Built-in parameter sent from <seealso cref="ConfigureServices"/></param>
         private static void ConfigureAuthentication(IServiceCollection services)
         {
             SecurityFactory.Authentication.Configure();
