@@ -1,5 +1,6 @@
 .git
 **/.idea/
+**/httpRequests
 obj
 bin
 *.user
