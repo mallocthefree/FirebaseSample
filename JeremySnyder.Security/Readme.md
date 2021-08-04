@@ -4,7 +4,7 @@
    * [Security Basics, Part 1: Quick And Dirty Security With Firebase](https://jeremysnyder.consulting/technology/quick-and-dirty-security-with-firebase)
    * [Security Basics, Part 2: Simple Database Structure for Security](https://jeremysnyder.consulting/technology/simple-database-structure-for-security)
    * [Idempotent Database Scripting](https://jeremysnyder.consulting/technology/master-sql-scripting-structure)
-   * [Security Basics, Part 3: .NET Project Structure](https://jeremysnyder.consulting/technology)
+   * [Security Basics, Part 3: .NET Project Structure](https://jeremysnyder.consulting/technology/security-basics-part-3)
    
    Usage of these files is freely available as long as you mark a reference to the original site you found this within your code sample, either by the GitHub account or the referencing blog posting with the full URLs.
    
