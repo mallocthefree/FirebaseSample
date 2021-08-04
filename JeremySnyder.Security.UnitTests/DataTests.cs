@@ -20,10 +20,14 @@ namespace JeremySnyder.Security.UnitTests
         /// <summary>
         /// Added regularly used test strings here so that they can be changed easily to match a new use case
         /// </summary>
-        private const string UnitTestKeyReal = "v2OcfN1HtPVm30JrSpfpnDhN3Tg1";
+
+        /* This user must be set up in Firebase */
         private const string UnitTestEmailReal = "jeremysnyder.consulting@gmail.com";
         private const string UnitTestFirstNameReal = "Jeremy";
         private const string UnitTestLastNameReal = "Snyder";
+        private const string UnitTestKeyReal = "v2OcfN1HtPVm30JrSpfpnDhN3Tg1";
+        
+        /* No need to change this one. It's intended for using as a test for "user doesn't exist" scenarios */
         private const string UnitTestEmailBogus = "UnitTest.NotReal@gmail.com";
 
         [Test]

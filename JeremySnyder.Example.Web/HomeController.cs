@@ -50,7 +50,10 @@ namespace JeremySnyder.Example.Web
         public IActionResult HelloMe()
         {
             Logging.Debug("HelloMe initiated");
+            
+            // This is the call that initiates the call to establish authentication with the Firebase service.
             var user = GetAuthenticationName();
+            
             return Ok(new ApiMessage { Message = $"Hello, {user}"} );
         }
     }

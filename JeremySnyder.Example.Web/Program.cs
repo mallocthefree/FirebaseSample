@@ -30,6 +30,7 @@ namespace JeremySnyder.Example.Web
         
         private static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
+            // This line says to use the Startup class as the pattern for configurations
             return CommonWebHostBuilder(args).UseStartup<Startup>();
         }
     }

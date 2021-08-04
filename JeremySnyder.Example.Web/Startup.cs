@@ -248,7 +248,9 @@ namespace JeremySnyder.Example.Web
         /// <param name="services">Built-in parameter sent from <seealso cref="ConfigureServices"/></param>
         private static void ConfigureAuthentication(IServiceCollection services)
         {
+            // This line establishes the configuration to be used for Firebase validation
             SecurityFactory.Authentication.Configure();
+            
             Logging.Info($"Using Tokens via [{SecurityFactory.Configuration.Issuer}]");
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

@@ -40,6 +40,8 @@ namespace JeremySnyder.Security.Firebase
                 Credential = GoogleCredential.FromFile(Configuration.KeyPath)
             };
 
+            // This is the true establishment of the relationship with Firebase,
+            // and critical to this entire authentication process.
             Instance = FirebaseApp.Create(options);
         }
     }
