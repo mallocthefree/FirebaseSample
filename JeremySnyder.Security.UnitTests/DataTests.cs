@@ -11,6 +11,7 @@ using NUnit.Framework;
 using JeremySnyder.Security.Data;
 using JeremySnyder.Security.Data.Enums;
 using JeremySnyder.Security.Data.Models;
+using NUnit.Framework.Legacy;
 
 namespace JeremySnyder.Security.UnitTests
 {
@@ -38,8 +39,8 @@ namespace JeremySnyder.Security.UnitTests
         {
             var userRoles = SecurityDataModelBoundary.GetUserRoles(userId);
             
-            Assert.NotNull(userRoles);
-            Assert.IsNotEmpty(userRoles);
+            ClassicAssert.NotNull(userRoles);
+            ClassicAssert.IsNotEmpty(userRoles);
         }
         
         [Test]
@@ -50,9 +51,9 @@ namespace JeremySnyder.Security.UnitTests
         {
             var user = SecurityDataModelBoundary.FindById(userId);
             
-            Assert.NotNull(user);
-            Assert.NotNull(user.Roles);
-            Assert.IsNotEmpty(user.Roles);
+            ClassicAssert.NotNull(user);
+            ClassicAssert.NotNull(user.Roles);
+            ClassicAssert.IsNotEmpty(user.Roles);
         }
         
         [Test]
@@ -80,16 +81,16 @@ namespace JeremySnyder.Security.UnitTests
 
             var user = SecurityDataModelBoundary.AddUser(userToUpsert);
             
-            Assert.NotNull(user);
+            ClassicAssert.NotNull(user);
             if (id > 0)
             {
-                Assert.AreEqual(id, user.ID);
+                ClassicAssert.AreEqual(id, user.ID);
             }
             
-            Assert.AreEqual(emailAddress, user.EmailAddress);
-            Assert.AreEqual(identifier, user.SecurityIdentifier);
-            Assert.AreEqual(firstName, user.FirstName);
-            Assert.AreEqual(lastName, user.LastName);
+            ClassicAssert.AreEqual(emailAddress, user.EmailAddress);
+            ClassicAssert.AreEqual(identifier, user.SecurityIdentifier);
+            ClassicAssert.AreEqual(firstName, user.FirstName);
+            ClassicAssert.AreEqual(lastName, user.LastName);
         }
 
         [Test]
@@ -105,14 +106,14 @@ namespace JeremySnyder.Security.UnitTests
         {
             var user = SecurityDataModelBoundary.FindBySecurityIdentifier(identifier);
             
-            Assert.NotNull(user);
-            Assert.AreEqual(id, user.ID);
-            Assert.AreEqual(emailAddress, user.EmailAddress);
-            Assert.AreEqual(identifier, user.SecurityIdentifier);
-            Assert.AreEqual(firstName, user.FirstName);
-            Assert.AreEqual(lastName, user.LastName);
-            Assert.NotNull(user.Roles);
-            Assert.IsNotEmpty(user.Roles);
+            ClassicAssert.NotNull(user);
+            ClassicAssert.AreEqual(id, user.ID);
+            ClassicAssert.AreEqual(emailAddress, user.EmailAddress);
+            ClassicAssert.AreEqual(identifier, user.SecurityIdentifier);
+            ClassicAssert.AreEqual(firstName, user.FirstName);
+            ClassicAssert.AreEqual(lastName, user.LastName);
+            ClassicAssert.NotNull(user.Roles);
+            ClassicAssert.IsNotEmpty(user.Roles);
         }
         
         [Test]
@@ -128,14 +129,14 @@ namespace JeremySnyder.Security.UnitTests
         {
             var user = SecurityDataModelBoundary.FindByEmail(emailAddress);
             
-            Assert.NotNull(user);
-            Assert.AreEqual(id, user.ID);
-            Assert.AreEqual(emailAddress, user.EmailAddress);
-            Assert.AreEqual(securityIdentifier, user.SecurityIdentifier);
-            Assert.AreEqual(firstName, user.FirstName);
-            Assert.AreEqual(lastName, user.LastName);
-            Assert.NotNull(user.Roles);
-            Assert.IsNotEmpty(user.Roles);
+            ClassicAssert.NotNull(user);
+            ClassicAssert.AreEqual(id, user.ID);
+            ClassicAssert.AreEqual(emailAddress, user.EmailAddress);
+            ClassicAssert.AreEqual(securityIdentifier, user.SecurityIdentifier);
+            ClassicAssert.AreEqual(firstName, user.FirstName);
+            ClassicAssert.AreEqual(lastName, user.LastName);
+            ClassicAssert.NotNull(user.Roles);
+            ClassicAssert.IsNotEmpty(user.Roles);
         }
         
         [Test]
@@ -171,9 +172,9 @@ namespace JeremySnyder.Security.UnitTests
             SecurityDataModelBoundary.AddUserRole(userModel.ID, (SecurityRoles)roleId);
             roles = SecurityDataModelBoundary.GetUserRoles(userModel.ID);
             
-            Assert.NotNull(roles);
-            Assert.AreEqual(emailAddress, userModel.EmailAddress);
-            Assert.IsTrue(roles.Any(r => r.RoleID == roleId));
+            ClassicAssert.NotNull(roles);
+            ClassicAssert.AreEqual(emailAddress, userModel.EmailAddress);
+            ClassicAssert.IsTrue(roles.Any(r => r.RoleID == roleId));
         }
         
         [Test]
@@ -208,9 +209,9 @@ namespace JeremySnyder.Security.UnitTests
             SecurityDataModelBoundary.RemoveUserRole(userModel.ID, (SecurityRoles)roleId);
             roles = SecurityDataModelBoundary.GetUserRoles(userModel.ID);
             
-            Assert.NotNull(roles);
-            Assert.AreEqual(emailAddress, userModel.EmailAddress);
-            Assert.IsTrue(roles.All(r => r.RoleID != roleId));
+            ClassicAssert.NotNull(roles);
+            ClassicAssert.AreEqual(emailAddress, userModel.EmailAddress);
+            ClassicAssert.IsTrue(roles.All(r => r.RoleID != roleId));
         }
     }
 }

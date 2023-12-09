@@ -96,8 +96,6 @@ namespace JeremySnyder.Example.Web
             
             services.AddSwaggerGenNewtonsoftSupport();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-
             services.AddSwaggerGen(c =>
             {
                 c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
